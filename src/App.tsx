@@ -1,41 +1,31 @@
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import './App.css'
-import { Navbar, NavbarBrand, NavbarContent, NavbarItem, Link, Button } from '@nextui-org/react'
-
+import Home from './views/Home'
+import NavbarComponent from './components/Navbar'
 
 function App() {
   return (
     <>
-      <Navbar>
-      <NavbarBrand>
-      </NavbarBrand>
-      <NavbarContent className="hidden sm:flex gap-4" justify="center">
-        <NavbarItem>
-          <Link color="foreground" href="#">
-            Features
-          </Link>
-        </NavbarItem>
-        <NavbarItem isActive>
-          <Link href="#" aria-current="page">
-            Customers
-          </Link>
-        </NavbarItem>
-        <NavbarItem>
-          <Link color="foreground" href="#">
-            Integrations
-          </Link>
-        </NavbarItem>
-      </NavbarContent>
-      <NavbarContent justify="end">
-        <NavbarItem className="hidden lg:flex">
-          <Link href="#">Login</Link>
-        </NavbarItem>
-        <NavbarItem>
-          <Button as={Link} color="primary" href="#" variant="flat">
-            Sign Up
-          </Button>
-        </NavbarItem>
-      </NavbarContent>
-    </Navbar>
+      <BrowserRouter>
+      <NavbarComponent />
+      <Routes>
+          <Route path="/" element={<Home />} /> {/*Comprobar si el usuario esta logeado */}
+          <Route path="/home" element={<Home />} />
+
+
+
+          {/* <Route path="/login" element={<LoginPage />} />
+          <Route path="/logout" element={<LogoutPage />} />
+          <Route path="/token" element={<RequireAuth><TokenPage /></RequireAuth>} />
+          <Route path="/bookings" element={<RequireAuth><BookingsPage /></RequireAuth>} />
+          <Route path="/bookings/:id" element={<RequireAuth><BookingDetailPage /></RequireAuth>} />
+          <Route path="/spaces" element={<RequireAuth><SpacesPage /></RequireAuth>} />
+          <Route path="/spaces/:id" element={<RequireAuth><SpaceDetailPage /></RequireAuth>} />
+          <Route path="/users" element={<RequireAuth><UsersPage /></RequireAuth>} />
+          <Route path="/users/:id" element={<RequireAuth><UserDetailPage /></RequireAuth>} /> */}
+      </Routes>
+      
+      </BrowserRouter>
     </>
   )
 }
