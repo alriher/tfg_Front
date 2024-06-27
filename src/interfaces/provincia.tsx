@@ -1,4 +1,4 @@
-export interface Provincia {
+export interface IProvincia {
     value: string;
     nombre: string;
 }

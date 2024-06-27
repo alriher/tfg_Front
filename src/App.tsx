@@ -2,6 +2,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import './App.css'
 import Home from './views/Home'
 import NavbarComponent from './components/Navbar'
+import Communities from './views/Communities'
 
 function App() {
   return (
@@ -11,6 +12,7 @@ function App() {
       <Routes>
           <Route path="/" element={<Home />} /> {/*Comprobar si el usuario esta logeado */}
           <Route path="/home" element={<Home />} />
+          <Route path="/communities" element={<Communities />} />
 
 
 

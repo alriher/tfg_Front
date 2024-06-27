@@ -1,15 +1,26 @@
 import { useState } from "react";
 import { Navbar, NavbarBrand, NavbarContent, NavbarItem, NavbarMenuToggle, NavbarMenu, NavbarMenuItem, Link, Button } from "@nextui-org/react";
+import { IMenuItem } from "../interfaces/menuItem";
 
 export default function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const menuItems = [
-    "Inicio",
-    "Comunidades",
-    "Contacto",
-    "Iniciar sesión",
-    "Regístrate",
+  const isActiveRoute = (route: string) => {
+    return window.location.pathname === route;
+  };
+
+  const mobileMenu: IMenuItem[] = [
+    { item: "Inicio", route: "/home" },
+    { item: "Comunidades", route: "/communities" },
+    { item: "Contacto", route: "/contact" },
+    { item: "Iniciar sesión", route: "/login" },
+    { item: "Regístrate", route: "/sign-up" },
+  ];
+
+  const menuItems: IMenuItem[] = [
+    { item: "Inicio", route: "/home" },
+    { item: "Comunidades", route: "/communities" },
+    { item: "Contacto", route: "/contact" }
   ];
 
   return (
@@ -46,44 +57,41 @@ export default function App() {
       </NavbarContent>
 
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
-        <NavbarItem>
-          <Link color="foreground" href="#">
-            Inicio
-          </Link>
-        </NavbarItem>
-        <NavbarItem isActive>
-          <Link color="secondary" href="#" aria-current="page">
-            Comunidades
-          </Link>
-        </NavbarItem>
-        <NavbarItem>
-          <Link color="foreground" href="#">
-            Contacto
-          </Link>
-        </NavbarItem>
+        {menuItems.map((item, index) => (
+          <NavbarItem isActive={isActiveRoute(item.route)} key={`${item.item}-${index}`}>
+            <Link
+              color={
+                isActiveRoute(item.route) ? "primary" : "foreground"
+              }
+              href={item.route}
+            >
+              {item.item}
+            </Link>
+          </NavbarItem>
+        ))}
       </NavbarContent>
       <NavbarContent justify="end">
         <NavbarItem className="hidden lg:flex">
-          <Link color="secondary" className="underline underline-offset-2" href="#">Iniciar sesión</Link>
+          <Link className="underline underline-offset-2" href="/login">Iniciar sesión</Link>
         </NavbarItem>
         <NavbarItem>
-          <Button as={Link} className="font-semibold" color="secondary" href="#">
+          <Button as={Link} color="primary" className="font-semibold" href="/sign-up">
             Regístrate
           </Button>
         </NavbarItem>
       </NavbarContent>
       <NavbarMenu>
-        {menuItems.map((item, index) => (
-          <NavbarMenuItem key={`${item}-${index}`}>
+        {mobileMenu.map((item, index) => (
+          <NavbarMenuItem key={`${item.item}-${index}`}>
             <Link
               color={
                 index === 2 ? "primary" : index === menuItems.length - 1 ? "danger" : "foreground"
               }
               className="w-full"
-              href="#"
+              href={item.route}
               size="lg"
             >
-              {item}
+              {item.item}
             </Link>
           </NavbarMenuItem>
         ))}
