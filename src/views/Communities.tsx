@@ -2,17 +2,13 @@ import { useEffect, useState } from "react";
 import SearchBar from "../components/SearchBar";
 import SpaceCard from "../components/SpaceCard";
 import { ISpace } from "../interfaces/space";
-
-const BACKEND_URL = import.meta.env.VITE_BACK_URL;
+import { getSpaces } from "../services/CommunitiesService";
 
 function Communities() {
   const [spaces, setSpaces] = useState<ISpace[]>([]);
 
   useEffect(() => {
-    fetch(`${BACKEND_URL}/spaces`)
-      .then(response => response.json())
-      .then(data => setSpaces(data))
-      .catch(error => console.error("Error fetching spaces:", error));
+    getSpaces().then((spaces) => setSpaces(spaces));
   }, []);
 
   return (

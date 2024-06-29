@@ -8,4 +8,6 @@ export interface ISpace {
   lat: number;
   lon: number;
   img: string;
+  createdAt: string;
+  updatedAt: string;
 }

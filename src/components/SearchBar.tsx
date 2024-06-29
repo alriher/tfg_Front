@@ -2,18 +2,14 @@ import {
   Autocomplete,
   AutocompleteItem,
   Button,
-  DateInput,
   DatePicker,
-  DateRangePicker,
   TimeInput,
 } from "@nextui-org/react";
 import provincias from "../assets/provincias.json";
 import municipios from "../assets/municipios.json";
 import { useState, useEffect } from "react";
 import { IProvincia } from "../interfaces/provincia";
-import { today, getLocalTimeZone } from "@internationalized/date";
 import SearchIcon from "./icons/SearchIcon";
-import SingleDatePicker from "./SingleDatePickerRange";
 
 export default function SearchBar() {
   const [selectedProvincia, setSelectedProvincia] = useState<String | null>(
@@ -36,7 +32,6 @@ export default function SearchBar() {
         (municipio) => municipio.provincia_id === selectedProvincia
       );
       setFilteredMunicipios(filtered);
-      console.log(filtered);
     }
   }, [selectedProvincia]);
 

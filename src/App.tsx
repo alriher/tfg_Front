@@ -1,22 +1,23 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import './App.css'
-import Home from './views/Home'
-import NavbarComponent from './components/Navbar'
-import Communities from './views/Communities'
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import "./App.css";
+import Home from "./views/Home";
+import NavbarComponent from "./components/Navbar";
+import Communities from "./views/Communities";
+import Login from "./views/Login";
+import AuthProvider from "./providers/AuthProvider";
 
 function App() {
   return (
-    <>
-      <BrowserRouter>
-      <NavbarComponent />
-      <Routes>
-          <Route path="/" element={<Home />} /> {/*Comprobar si el usuario esta logeado */}
-          <Route path="/home" element={<Home />} />
-          <Route path="/communities" element={<Communities />} />
-
-
-
-          {/* <Route path="/login" element={<LoginPage />} />
+      <AuthProvider>
+        <BrowserRouter>
+          <NavbarComponent />
+          <Routes>
+            <Route path="/" element={<Home />} />{" "}
+            {/*Comprobar si el usuario esta logeado */}
+            <Route path="/home" element={<Home />} />
+            <Route path="/communities" element={<Communities />} />
+            <Route path="/login" element={<Login />} />
+            {/* 
           <Route path="/logout" element={<LogoutPage />} />
           <Route path="/token" element={<RequireAuth><TokenPage /></RequireAuth>} />
           <Route path="/bookings" element={<RequireAuth><BookingsPage /></RequireAuth>} />
@@ -25,11 +26,10 @@ function App() {
           <Route path="/spaces/:id" element={<RequireAuth><SpaceDetailPage /></RequireAuth>} />
           <Route path="/users" element={<RequireAuth><UsersPage /></RequireAuth>} />
           <Route path="/users/:id" element={<RequireAuth><UserDetailPage /></RequireAuth>} /> */}
-      </Routes>
-      
-      </BrowserRouter>
-    </>
-  )
+          </Routes>
+        </BrowserRouter>
+      </AuthProvider>
+  );
 }
 
-export default App
+export default App;
