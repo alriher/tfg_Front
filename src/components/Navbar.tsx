@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Navbar,
   NavbarBrand,
@@ -9,14 +9,14 @@ import {
   NavbarMenuItem,
   Link,
   Button,
-  Avatar,
 } from "@nextui-org/react";
 import { IMenuItem } from "../interfaces/menuItem";
 import { useAuth } from "../providers/AuthProvider";
+import ProfileAvatar from "./ProfileAvatar";
 
 export default function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const isActiveRoute = (route: string) => {
     return window.location.pathname === route;
   };
@@ -92,7 +92,7 @@ export default function App() {
       </NavbarContent>
       <NavbarContent justify="end">
         {user ? (
-          <Avatar showFallback name={user.username} />
+          <ProfileAvatar user={user} logout={logout} />
         ) : (
           <>
             <NavbarItem className="hidden lg:flex">

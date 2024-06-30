@@ -1,4 +1,3 @@
-// AuthProvider.tsx
 import { createContext, useState, ReactNode, useContext } from "react";
 import api from "../services/JwtService";
 import { IUser } from "../interfaces/user";
@@ -16,7 +15,7 @@ export interface IUserFormInput {
 
 const AuthContext = createContext<IAuthContext | null>(null);
 
-const AuthProvider = ({ children }: { children: ReactNode }) => {
+export default function AuthProvider ({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<IUser | null>(null);
 
   const login = async (email: string, password: string) => {
@@ -24,13 +23,17 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       const response = await api.post("/login", { email, password });
       setUser(response.data);
     } catch (error) {
-      throw new Error("Login failed");
+      throw error
     }
   };
 
   const logout = async () => {
-    await api.post("/logout");
-    setUser(null);
+    try {
+      await api.post("/logout");
+      setUser(null);
+    } catch (error) {
+      throw new Error("Logout failed");
+    }
   };
 
   return (
@@ -48,5 +51,3 @@ export const useAuth = () => {
 
   return authContext;
 };
-
-export default AuthProvider;

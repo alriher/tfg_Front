@@ -1,0 +1,4 @@
+{
+  "REQUIRED": "El campo {{field}} es obligatorio",
+  "LOGIN_400": "Email o contraseña incorrectos"
+}

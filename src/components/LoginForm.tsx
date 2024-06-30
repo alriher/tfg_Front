@@ -5,16 +5,24 @@ import EyeFilledIcon from "./EyeSlashFilledIcon";
 import EyeSlashFilledIcon from "./EyeSlashFilledIcon";
 import { useLocation, useNavigate } from "react-router-dom";
 import { IUserFormInput, useAuth } from "../providers/AuthProvider";
+import { getErrorMessage } from "../services/ErrorServices";
+import { cn } from "../utils/cn";
 
 const LoginForm = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const { register, handleSubmit } = useForm<IUserFormInput>();
+  const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm<IUserFormInput>();
+  const [formErrors, setFormErrors] = React.useState<string[]>([]);
+  const passwordValue = watch("password");
   const onSubmit: SubmitHandler<IUserFormInput> = (data) =>
     login(data.email, data.password).then(() => {
       const { from } = location.state || { from: { pathname: "/home" } };
       navigate(from);
+    }).catch((error) => {
+      setFormErrors(["login_" + error.response.status])
+      setValue("password", "")
+      console.log("AASDFasdef")
     });
   const [isVisible, setIsVisible] = React.useState(false);
   const toggleVisibility = () => setIsVisible(!isVisible);
@@ -29,18 +37,23 @@ const LoginForm = () => {
         >
           <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
             <Input
-              {...register("email")}
+              {...register("email", { required: true })}
+              aria-invalid={errors.email ? "true" : "false"}
               type="email"
               label="Email"
               placeholder="Enter your email"
+              isInvalid={!!errors.email}
+              errorMessage={getErrorMessage(errors.email?.type, { field: "email" })}
             />
           </div>
-          <div className="mb-4">
+          <div>
             <Input
-              {...register("password")}
-              label="Password"
+              {...register("password", { required: true })}
+              label="Contraseña"
               variant="bordered"
-              placeholder="Enter your password"
+              placeholder="Introduce tu contraseña"
+              isInvalid={!!errors.password}
+              errorMessage={getErrorMessage(errors.password?.type, { field: "contraseña" })}
               endContent={
                 <button
                   className="focus:outline-none"
@@ -58,7 +71,15 @@ const LoginForm = () => {
               className="max-w-xs"
             />
           </div>
-
+          <div className={cn({"hidden": formErrors.length == 0})}>
+            {formErrors.map((error, index) => (
+              <div
+                key={index}
+              >
+                <span className="text-danger">{getErrorMessage(error)}</span>
+              </div>
+            ))}
+          </div>
           <Button color="primary" className="font-semibold" type="submit">
             Iniciar Sesión
           </Button>
