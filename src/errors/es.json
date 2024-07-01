@@ -1,4 +1,13 @@
 {
   "REQUIRED": "El campo {{field}} es obligatorio",
-  "LOGIN_400": "Email o contraseña incorrectos"
+  "LOGIN_400": "Email o contraseña incorrectos",
+  "IS_AFTER_NOW": "La fecha debe ser posterior a la fecha actual",
+  "IS_BEFORE": "La fecha debe ser anterior a {{date}}",
+  "MIN": "El campo {{field}} debe tener al menos {{min}} caracteres",
+  "MAX": "El campo {{field}} debe tener como máximo {{max}} caracteres",
+  "IS_EMAIL": "El campo {{field}} debe ser un email válido",
+  "IS_URL": "El campo {{field}} debe ser una URL válida",
+  "IS_STRING": "El campo {{field}} debe ser una cadena de texto",
+  "IS_NUMBER": "El campo {{field}} debe ser un número",
+  "IS_BOOLEAN": "El campo {{field}} debe ser un booleano"
 }

@@ -13,9 +13,11 @@ import {
 import { IMenuItem } from "../interfaces/menuItem";
 import { useAuth } from "../providers/AuthProvider";
 import ProfileAvatar from "./ProfileAvatar";
+import { useNavigate } from "react-router-dom";
 
 export default function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate = useNavigate();
   const { user, logout } = useAuth();
   const isActiveRoute = (route: string) => {
     return window.location.pathname === route;
@@ -26,7 +28,7 @@ export default function App() {
     { item: "Comunidades", route: "/communities" },
     { item: "Contacto", route: "/contact" },
     { item: "Iniciar sesión", route: "/login" },
-    { item: "Regístrate", route: "/sign-up" },
+    { item: "Regístrate", route: "/register" },
   ];
 
   const menuItems: IMenuItem[] = [
@@ -34,6 +36,14 @@ export default function App() {
     { item: "Comunidades", route: "/communities" },
     { item: "Contacto", route: "/contact" },
   ];
+
+  function handleLoginNavigate(): void {
+    navigate("/login", { state: { from: window.location.pathname } });
+  }
+
+  function handleSignUpNavigate(): void {
+    navigate("/register", { state: { from: window.location.pathname } });
+  }
 
   return (
     <Navbar
@@ -96,7 +106,10 @@ export default function App() {
         ) : (
           <>
             <NavbarItem className="hidden lg:flex">
-              <Link className="underline underline-offset-2" href="/login">
+              <Link
+                className="underline underline-offset-2 cursor-pointer"
+                onPress={handleLoginNavigate}
+              >
                 Iniciar sesión
               </Link>
             </NavbarItem>
@@ -104,8 +117,8 @@ export default function App() {
               <Button
                 as={Link}
                 color="primary"
-                className="font-semibold"
-                href="/sign-up"
+                className="font-semibold "
+                onPress={handleSignUpNavigate}
               >
                 Regístrate
               </Button>

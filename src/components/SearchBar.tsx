@@ -7,19 +7,17 @@ import {
 } from "@nextui-org/react";
 import provincias from "../assets/provincias.json";
 import municipios from "../assets/municipios.json";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Key } from "react";
 import { IProvincia } from "../interfaces/provincia";
 import SearchIcon from "./icons/SearchIcon";
 
 export default function SearchBar() {
-  const [selectedProvincia, setSelectedProvincia] = useState<String | null>(
-    null
-  );
+  const [selectedProvincia, setSelectedProvincia] = useState<Key | null>(null);
   const [filteredMunicipios, setFilteredMunicipios] = useState<IProvincia[]>(
     []
   );
 
-  const onSelectionChange = (id: any) => {
+  const onSelectionChange = (id: Key | null) => {
     if (id === null) {
       setFilteredMunicipios([]);
     }

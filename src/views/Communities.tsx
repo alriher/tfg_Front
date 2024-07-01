@@ -14,7 +14,7 @@ function Communities() {
   return (
     <>
       <SearchBar />
-      <div className="px-6 max-w-[1350px] m-auto grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="px-6 container m-auto grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-4">
         {spaces.map((space) => (
           <SpaceCard key={space.id} space={space} />
         ))}

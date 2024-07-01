@@ -1,0 +1,15 @@
+export const schedule = [
+  { key: "uniqueKey1", value: "09:00-10:00" },
+  { key: "uniqueKey2", value: "10:00-11:00" },
+  { key: "uniqueKey3", value: "11:00-12:00" },
+  { key: "uniqueKey4", value: "12:00-13:00" },
+  { key: "uniqueKey5", value: "13:00-14:00" },
+  { key: "uniqueKey6", value: "14:00-15:00" },
+  { key: "uniqueKey7", value: "15:00-16:00" },
+  { key: "uniqueKey8", value: "16:00-17:00" },
+  { key: "uniqueKey9", value: "17:00-18:00" },
+  { key: "uniqueKey10", value: "18:00-19:00" },
+  { key: "uniqueKey11", value: "19:00-20:00" },
+  { key: "uniqueKey12", value: "20:00-21:00" },
+  { key: "uniqueKey13", value: "21:00-22:00" },
+];

@@ -1,4 +1,6 @@
 export enum ErrorTypes {
   required = "REQUIRED",
-  login_400 = "LOGIN_400",
-};
+  login400 = "LOGIN_400",
+  isAfterNow = "IS_AFTER_NOW",
+  isBefore = "IS_BEFORE",
+}

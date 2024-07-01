@@ -5,6 +5,7 @@ import NavbarComponent from "./components/Navbar";
 import Communities from "./views/Communities";
 import Login from "./views/Login";
 import { NextUIProvider } from "@nextui-org/react";
+import SpaceDetails from "./views/SpaceDetails";
 
 function App() {
   const navigate = useNavigate();
@@ -12,9 +13,10 @@ function App() {
     <NextUIProvider navigate={navigate} locale="es-ES">
       <NavbarComponent />
       <Routes>
-        <Route path="/" element={<Home />} />{" "}
+        <Route path="/" element={<Home />} />
         <Route path="/home" element={<Home />} />
         <Route path="/communities" element={<Communities />} />
+        <Route path="/spaces/:id" element={<SpaceDetails />} />
         <Route path="/login" element={<Login />} />
       </Routes>
     </NextUIProvider>

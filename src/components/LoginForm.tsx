@@ -1,31 +1,43 @@
 import React from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { Button, Input, Link } from "@nextui-org/react";
 import EyeFilledIcon from "./EyeSlashFilledIcon";
 import EyeSlashFilledIcon from "./EyeSlashFilledIcon";
 import { useLocation, useNavigate } from "react-router-dom";
-import { IUserFormInput, useAuth } from "../providers/AuthProvider";
+import { useAuth } from "../providers/AuthProvider";
 import { getErrorMessage } from "../services/ErrorServices";
 import { cn } from "../utils/cn";
+
+interface IUserFormInput {
+  email: string;
+  password: string;
+}
 
 const LoginForm = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm<IUserFormInput>();
-  const [formErrors, setFormErrors] = React.useState<string[]>([]);
-  const passwordValue = watch("password");
+  const {
+    handleSubmit,
+    formState: { errors },
+    setValue,
+    control,
+  } = useForm<IUserFormInput>();
+  const [formError, setFormErrors] = React.useState<string>("");
   const onSubmit: SubmitHandler<IUserFormInput> = (data) =>
-    login(data.email, data.password).then(() => {
-      const { from } = location.state || { from: { pathname: "/home" } };
-      navigate(from);
-    }).catch((error) => {
-      setFormErrors(["login_" + error.response.status])
-      setValue("password", "")
-      console.log("AASDFasdef")
-    });
+    login(data.email, data.password)
+      .then(() => {
+        const { from } = location.state || { from: { pathname: "/home" } };
+        navigate(from);
+      })
+      .catch((error) => {
+        setFormErrors("login" + error.response.status);
+        setValue("password", "", { shouldValidate: true });
+      });
   const [isVisible, setIsVisible] = React.useState(false);
   const toggleVisibility = () => setIsVisible(!isVisible);
+  
+  
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
@@ -36,49 +48,63 @@ const LoginForm = () => {
           className="flex gap-4 flex-col mb-4"
         >
           <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
-            <Input
-              {...register("email", { required: true })}
-              aria-invalid={errors.email ? "true" : "false"}
-              type="email"
-              label="Email"
-              placeholder="Enter your email"
-              isInvalid={!!errors.email}
-              errorMessage={getErrorMessage(errors.email?.type, { field: "email" })}
+            <Controller
+              control={control}
+              name="email"
+              rules={{ required: true }}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  type="email"
+                  label="Email"
+                  placeholder="Enter your email"
+                  isInvalid={!!errors.email}
+                  errorMessage={getErrorMessage(errors.email?.type, {
+                    field: "email",
+                  })}
+                />
+              )}
             />
           </div>
           <div>
-            <Input
-              {...register("password", { required: true })}
-              label="Contraseña"
-              variant="bordered"
-              placeholder="Introduce tu contraseña"
-              isInvalid={!!errors.password}
-              errorMessage={getErrorMessage(errors.password?.type, { field: "contraseña" })}
-              endContent={
-                <button
-                  className="focus:outline-none"
-                  type="button"
-                  onClick={() => toggleVisibility()}
-                >
-                  {isVisible ? (
-                    <EyeSlashFilledIcon className="text-2xl text-default-400 pointer-events-none" />
-                  ) : (
-                    <EyeFilledIcon className="text-2xl text-default-400 pointer-events-none" />
-                  )}
-                </button>
-              }
-              type={isVisible ? "text" : "password"}
-              className="max-w-xs"
+            <Controller
+              control={control}
+              name="password"
+              rules={{ required: true }}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  label="Contraseña"
+                  variant="bordered"
+                  placeholder="Introduce tu contraseña"
+                  isInvalid={!!errors.password}
+                  errorMessage={getErrorMessage(errors.password?.type, {
+                    field: "contraseña",
+                  })}
+                  endContent={
+                    <button
+                      className="focus:outline-none"
+                      type="button"
+                      onClick={() => toggleVisibility()}
+                    >
+                      {isVisible ? (
+                        <EyeSlashFilledIcon className="text-2xl text-default-400 pointer-events-none" />
+                      ) : (
+                        <EyeFilledIcon className="text-2xl text-default-400 pointer-events-none" />
+                      )}
+                    </button>
+                  }
+                  type={isVisible ? "text" : "password"}
+                  className="max-w-xs"
+                />
+              )}
             />
           </div>
-          <div className={cn({"hidden": formErrors.length == 0})}>
-            {formErrors.map((error, index) => (
-              <div
-                key={index}
-              >
-                <span className="text-danger">{getErrorMessage(error)}</span>
-              </div>
-            ))}
+          <div className={cn({ hidden: formError.length == 0 })}></div>
+          <div className={cn({ hidden: formError.length == 0 })}>
+            {formError.length != 0 ? (
+              <span className="text-danger">{getErrorMessage(formError)}</span>
+            ) : null}
           </div>
           <Button color="primary" className="font-semibold" type="submit">
             Iniciar Sesión
