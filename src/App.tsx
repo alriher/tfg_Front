@@ -6,6 +6,7 @@ import Communities from "./views/Communities";
 import Login from "./views/Login";
 import { NextUIProvider } from "@nextui-org/react";
 import SpaceDetails from "./views/SpaceDetails";
+import Register from "./views/Register";
 
 function App() {
   const navigate = useNavigate();
@@ -18,6 +19,7 @@ function App() {
         <Route path="/communities" element={<Communities />} />
         <Route path="/spaces/:id" element={<SpaceDetails />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
       </Routes>
     </NextUIProvider>
   );

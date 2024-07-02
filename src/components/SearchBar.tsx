@@ -3,73 +3,90 @@ import {
   AutocompleteItem,
   Button,
   DatePicker,
+  Select,
+  SelectItem,
   TimeInput,
 } from "@nextui-org/react";
-import provincias from "../assets/provincias.json";
-import municipios from "../assets/municipios.json";
+import provinces from "../assets/provincias.json";
+import municipalities from "../assets/municipios.json";
 import { useState, useEffect, Key } from "react";
-import { IProvincia } from "../interfaces/provincia";
+import { IProvince } from "../interfaces/province";
 import SearchIcon from "./icons/SearchIcon";
+import { getErrorMessage } from "../services/ErrorServices";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { CalendarDate, today } from "@internationalized/date";
+import EntryDateInput from "./EntryDateInput";
+import ScheduleInput from "./ScheduleInput";
+import ProvinceSelectorInput from "./ProvinceSelectorInput";
+import MunicipalitiesSelectorInput from "./MunicipalitySelectorInput";
+import { IMunicipality } from "../interfaces/municipality";
+
+interface ISearchBarFormInput {
+  province: string | null;
+  municipality: string | null;
+  entryDate: CalendarDate | null;
+  schedule: string | null;
+}
 
 export default function SearchBar() {
-  const [selectedProvincia, setSelectedProvincia] = useState<Key | null>(null);
-  const [filteredMunicipios, setFilteredMunicipios] = useState<IProvincia[]>(
+  const [selectedProvincia, setSelectedProvincia] = useState<string | null>(
+    null
+  );
+  const [filteredMunicipios, setFilteredMunicipios] = useState<IMunicipality[]>(
     []
   );
 
-  const onSelectionChange = (id: Key | null) => {
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      province: null,
+      municipality: null,
+      entryDate: today("Europe/Madrid"),
+      schedule: null,
+    },
+  });
+
+  const handleSelectionChangeProvinces = (id: string | null) => {
     if (id === null) {
       setFilteredMunicipios([]);
     }
     setSelectedProvincia(id);
   };
 
+  const onSubmit: SubmitHandler<ISearchBarFormInput> = (data) => {};
+
   useEffect(() => {
     if (selectedProvincia) {
-      const filtered = municipios.filter(
-        (municipio) => municipio.provincia_id === selectedProvincia
+      const filtered = municipalities.filter(
+        (municipality) => municipality.provinceId === selectedProvincia
       );
       setFilteredMunicipios(filtered);
     }
   }, [selectedProvincia]);
 
   return (
-    <div className="py-4 px-6 lg:max-w-[1350px] lg:flex mx-auto grid md:grid-cols-2 lg:grid-cols-5 items-center gap-4">
-      <Autocomplete
-        isRequired
-        defaultItems={provincias}
-        label="Provincias"
-        placeholder="Busca una provincias"
-        className="w-full lg:max-w-xs"
-        onSelectionChange={onSelectionChange}
-      >
-        {(provincias) => (
-          <AutocompleteItem key={provincias.value}>
-            {provincias.nombre}
-          </AutocompleteItem>
-        )}
-      </Autocomplete>
-      <Autocomplete
-        isDisabled={!selectedProvincia}
-        isRequired
-        defaultItems={filteredMunicipios}
-        label="Localidades"
-        placeholder="Busca una localidad"
-        className="w-full lg:max-w-xs"
-      >
-        {(filteredMunicipios) => (
-          <AutocompleteItem key={filteredMunicipios.value}>
-            {filteredMunicipios.nombre}
-          </AutocompleteItem>
-        )}
-      </Autocomplete>
-
-      <DatePicker
-        granularity="minute"
-        className="w-full lg:max-w-xs"
-        label="Fecha y hora de entrada"
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="py-4 px-6 lg:max-w-[1350px] lg:flex mx-auto grid md:grid-cols-2 lg:grid-cols-5 items-center gap-4"
+    >
+      <ProvinceSelectorInput
+        errors={errors}
+        control={control}
+        provinces={provinces}
+        handleSelectionChange={handleSelectionChangeProvinces}
       />
-      <TimeInput label="Hora de salida" className="w-full lg:max-w-xs" />
+      <MunicipalitiesSelectorInput
+        control={control}
+        errors={errors}
+        municipalities={filteredMunicipios}
+        isDependent={true}
+        selectedProvince={selectedProvincia as string}
+      />
+      <EntryDateInput control={control} errors={errors} />
+      <ScheduleInput control={control} errors={errors} />
 
       <Button
         className="hidden lg:inline-flex w-auto"
@@ -88,6 +105,6 @@ export default function SearchBar() {
       >
         Buscar
       </Button>
-    </div>
+    </form>
   );
 }

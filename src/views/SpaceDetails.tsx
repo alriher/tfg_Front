@@ -10,10 +10,9 @@ import {
   Link,
   Select,
   SelectItem,
-  TimeInput,
 } from "@nextui-org/react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { DateFormatter, today, ZonedDateTime } from "@internationalized/date";
+import { CalendarDate, today, ZonedDateTime } from "@internationalized/date";
 import { useAuth } from "../providers/AuthProvider";
 import { getErrorMessage } from "../services/ErrorServices";
 import {
@@ -23,7 +22,7 @@ import {
 import { schedule } from "../assets/schedules";
 import useDateFormatter from "../services/DateFormatterService";
 interface ISpaceFormInput {
-  entryDate: ZonedDateTime;
+  entryDate: CalendarDate;
   schedule: string;
   assistants: string;
 }
@@ -87,43 +86,27 @@ export default function SpaceDetails() {
           <div>
             <h1 className="font-bold text-2xl mb-6">{space.name}</h1>
             <p className="text-pretty">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-              Pellentesque venenatis mauris at lacus dictum, gravida vulputate
-              quam ultrices. Nullam gravida condimentum magna et lobortis.
-              Vivamus suscipit neque orci, sit amet molestie lacus feugiat quis.
-              Integer quis nulla efficitur, pellentesque tellus vel, cursus
-              risus. Vivamus egestas mi ac cursus posuere. Sed porta urna et
-              commodo lacinia. Maecenas quis laoreet nulla. Fusce sit amet metus
-              id ex cursus cursus. Sed sit amet cursus sem. Nam dapibus ligula
-              ac laoreet posuere. Suspendisse sit amet risus ut augue efficitur
-              dignissim. Lorem ipsum dolor sit amet, consectetur adipiscing
-              elit. Pellentesque venenatis mauris at lacus dictum, gravida
-              vulputate quam ultrices. Nullam gravida condimentum magna et
-              lobortis. Vivamus suscipit neque orci, sit amet molestie lacus
-              feugiat quis. Integer quis nulla efficitur, pellentesque tellus
-              vel, cursus risus. Vivamus egestas mi ac cursus posuere. Sed porta
-              urna et commodo lacinia. Maecenas quis laoreet nulla. Fusce sit
-              amet metus id ex cursus cursus. Sed sit amet cursus sem. Nam
-              dapibus ligula ac laoreet posuere. Suspendisse sit amet risus ut
-              augue efficitur dignissim. Lorem ipsum dolor sit amet, consectetur
-              adipiscing elit. Pellentesque venenatis mauris at lacus dictum,
-              gravida vulputate quam ultrices. Nullam gravida condimentum magna
-              et lobortis. Vivamus suscipit neque orci, sit amet molestie lacus
-              feugiat quis. Integer quis nulla efficitur, pellentesque tellus
-              vel, cursus risus. Vivamus egestas mi ac cursus posuere. Sed porta
-              urna et commodo lacinia. Maecenas quis laoreet nulla. Fusce sit
-              amet metus id ex cursus cursus. Sed sit amet cursus sem. Nam
-              dapibus ligula ac laoreet posuere. Suspendisse sit amet risus ut
-              augue efficitur dignissim. Lorem ipsum dolor sit amet, consectetur
-              adipiscing elit. Pellentesque venenatis mauris at lacus dictum,
-              gravida vulputate quam ultrices. Nullam gravida condimentum magna
-              et lobortis. Vivamus suscipit neque orci, sit amet molestie lacus
-              feugiat quis. Integer quis nulla efficitur, pellentesque tellus
-              vel, cursus risus. Vivamus egestas mi ac cursus posuere. Sed porta
-              urna et commodo lacinia. Maecenas quis laoreet nulla. Fusce sit
-              amet metus id ex cursus cursus. Sed sit amet cursus sem. Nam
-              dapibus ligula ac laoreet posuere. Suspendisse sit amet risus ut
-              augue efficitur dignissim.
+              Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aperiam,
+              eveniet. Doloremque adipisci obcaecati est libero, labore nam fuga
+              provident fugit, et ea suscipit iure quod distinctio dolorem quos
+              voluptate mollitia. Lorem ipsum dolor sit amet, consectetur
+              adipisicing elit. Ea beatae sint accusamus distinctio doloribus
+              voluptatem velit assumenda esse reprehenderit ut consequatur
+              debitis dolor obcaecati, at qui quas, eveniet atque quis. Lorem
+              ipsum dolor, sit amet consectetur adipisicing elit. Ducimus quidem
+              accusantium praesentium dolores, placeat natus quia, qui incidunt
+              iusto sed, magni aliquid. Animi molestias sit tempore cumque
+              architecto fuga veniam. lorem ipsum dolor sit amet, consectetur
+              adipisicing elit. Aperiam, eveniet. Doloremque adipisci obcaecati
+              est libero, labore nam fuga provident fugit, et ea suscipit iure
+              quod distinctio dolorem quos voluptate mollitia. Lorem ipsum dolor
+              sit amet, consectetur adipisicing elit. Ea beatae sint accusamus
+              distinctio doloribus voluptatem velit assumenda esse reprehenderit
+              ut consequatur debitis dolor obcaecati, at qui quas, eveniet atque
+              quis. Lorem ipsum dolor, sit amet consectetur adipisicing elit.
+              Ducimus quidem accusantium praesentium dolores, placeat natus
+              quia, qui incidunt iusto sed, magni aliquid. Animi molestias sit
+              tempore cumque
             </p>
           </div>
           <div>
@@ -154,7 +137,11 @@ export default function SpaceDetails() {
                       isInvalid={!!errors.entryDate}
                       errorMessage={getErrorMessage(errors.entryDate?.type, {
                         field: "fecha de entrada",
-                        date: dateFormatter.format(today("Europe/Madrid").add({ months: 1 }).toDate("Europe/Madrid")),
+                        date: dateFormatter.format(
+                          today("Europe/Madrid")
+                            .add({ months: 1 })
+                            .toDate("Europe/Madrid")
+                        ),
                       })}
                       maxValue={today("Europe/Madrid").add({ months: 1 })}
                       minValue={today("Europe/Madrid")}

@@ -1,14 +1,17 @@
-import es from "../errors/es.json"
-import Mustache from 'mustache';
+import es from "../errors/es.json";
+import Mustache from "mustache";
 import { ErrorTypes } from "../interfaces/errorType";
 
 const messages: any = {
-  ...es
-}
+  ...es,
+};
 
-export function getErrorMessage(error: string | undefined, variables = {}): string {
-  if(!error) return "Error desconocido";
+export function getErrorMessage(
+  error: string | undefined,
+  variables = {}
+): string {
+  if (!error) return "Error desconocido";
   const key = error as keyof typeof ErrorTypes;
   const message = messages[ErrorTypes[key]] || "Error desconocido";
-  console.log(" asdfasdasd", variables)
-  return Mustache.render(message, variables).replace(/&#x2F;/g, '/');}
+  return Mustache.render(message, variables).replace(/&#x2F;/g, "/");
+}

@@ -7,13 +7,15 @@ import {
 } from "react";
 import api from "../services/JwtService";
 import { IUser } from "../interfaces/user";
+import { CalendarDate } from "@internationalized/date";
 
 export interface IAuthContext {
-  login: (username: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   user: IUser | null;
-  register: (username: string, password: string) => Promise<void>;
+  register: (email: string, password: string, username: string, name: string, lastName: string, birthDate: CalendarDate, address: string, phone: string) => Promise<void>;
 }
+// Birthdate deberia ser string, tengo que hacer la conversion. Lo mismo para el metodo register mas abajo
 
 const AuthContext = createContext<IAuthContext | null>(null);
 
@@ -36,8 +38,8 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
     await api.post("/logout");
   };
 
-  const register = async (email: string, password: string) => {
-    await api.post("/register", { email, password });
+  const register = async (email: string, password: string, username: string, name: string, lastName: string, birthDate: CalendarDate, address: string, phone: string ) => {
+    await api.post("/register", { email, password, username, name, lastName, birthDate, address, phone});
   };
 
   useEffect(() => {

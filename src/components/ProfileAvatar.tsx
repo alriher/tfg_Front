@@ -1,12 +1,25 @@
-import { Dropdown, DropdownTrigger, Avatar, DropdownMenu, DropdownItem } from "@nextui-org/react";
+import {
+  Dropdown,
+  DropdownTrigger,
+  Avatar,
+  DropdownMenu,
+  DropdownItem,
+} from "@nextui-org/react";
 import { IUser } from "../interfaces/user";
 
-export default function ProfileAvatar({ user, logout }: { user: IUser; logout: () => void}) {
+export default function ProfileAvatar({
+  user,
+  logout,
+}: {
+  user: IUser;
+  logout: () => void;
+}) {
   return (
     <div className="flex items-center gap-4">
       <Dropdown>
         <DropdownTrigger>
           <Avatar
+            color="primary"
             isBordered
             as="button"
             className="transition-transform"
@@ -19,10 +32,13 @@ export default function ProfileAvatar({ user, logout }: { user: IUser; logout: (
             <p className="font-semibold">Sesión iniciada como:</p>
             <p className="font-semibold">{user.email}</p>
           </DropdownItem>
-          <DropdownItem key="profile">
-            Mi perfil
-          </DropdownItem>
-          <DropdownItem className="text-danger" onPress={logout} key="logout" color="danger">
+          <DropdownItem key="profile">Mi perfil</DropdownItem>
+          <DropdownItem
+            className="text-danger"
+            onPress={logout}
+            key="logout"
+            color="danger"
+          >
             Cerrar sesión
           </DropdownItem>
         </DropdownMenu>
