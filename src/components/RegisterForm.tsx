@@ -14,10 +14,11 @@ import { isBeforeValidation } from "../services/ValidationService";
 interface IUserRegisterFormInput {
     email: string;
     password: string;
+    confirmPassword: string;
     username: string;
     name: string;
     lastName: string;
-    birthDate: CalendarDate; // deberia ser string
+    birthdate: CalendarDate; // deberia ser string
     address: string;
     phone: string;
 }
@@ -28,19 +29,23 @@ const RegisterForm = () => {
     const location = useLocation();
     const {
         handleSubmit,
+        watch,
         formState: { errors },
         setValue,
         control,
     } = useForm<IUserRegisterFormInput>(
         {
             defaultValues: {
-                birthDate: today("Europe/Madrid")
+                birthdate: today("Europe/Madrid")
             },
         }
     );
+
+    const password = watch("password", "");
     const [formError, setFormErrors] = React.useState<string>("");
     const onSubmit: SubmitHandler<IUserRegisterFormInput> = (data) =>
-        register(data.email, data.password, data.username, data.name, data.lastName, data.birthDate, data.address, data.phone)
+        
+        register(data.email, data.password, data.username, data.name, data.lastName, data.birthdate.toString(), data.address, data.phone)
             .then(() => {
                 const { from } = location.state || { from: { pathname: "/home" } };
                 navigate(from);
@@ -121,6 +126,42 @@ const RegisterForm = () => {
                     <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
                         <Controller
                             control={control}
+                            name="confirmPassword"
+                            rules={{
+                                required: true,
+                                validate: (value) =>
+                                    value === password || "Las contraseñas no coinciden",
+                            }}
+                            render={({ field }) => (
+                                <Input
+                                    {...field}
+                                    type="password"
+                                    label="Confirmar contraseña"
+                                    placeholder="Enter your password again"
+                                    isInvalid={!!errors.confirmPassword}
+                                    errorMessage={getErrorMessage(errors.confirmPassword?.type, {
+                                        field: "confirmar contraseña",
+                                    })}
+                                    endContent={
+                                        <button
+                                            className="focus:outline-none"
+                                            type="button"
+                                            onClick={() => toggleVisibility()}
+                                        >
+                                            {isVisible ? (
+                                                <EyeSlashFilledIcon className="text-2xl text-default-400 pointer-events-none" />
+                                            ) : (
+                                                <EyeFilledIcon className="text-2xl text-default-400 pointer-events-none" />
+                                            )}
+                                        </button>
+                                    }
+                                />
+                            )}
+                        />
+                    </div>
+                    <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
+                        <Controller
+                            control={control}
                             name="username"
                             rules={{ required: true }}
                             render={({ field }) => (
@@ -166,7 +207,7 @@ const RegisterForm = () => {
                         />
                         <Controller
                             control={control}
-                            name="birthDate"
+                            name="birthdate"
                             rules={{
                                 required: false,
                                 validate: {
@@ -181,7 +222,7 @@ const RegisterForm = () => {
                             render={({ field }) => (
                                 <DatePicker
                                     {...field}
-                                    isInvalid={!!errors.birthDate}
+                                    isInvalid={!!errors.birthdate}
                                     maxValue={today("Europe/Madrid")}
                                     minValue={today("Europe/Madrid").add({ years: -100 })}
                                     hideTimeZone
