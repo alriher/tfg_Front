@@ -7,13 +7,21 @@ import {
 } from "react";
 import api from "../services/JwtService";
 import { IUser } from "../interfaces/user";
-import { set } from "react-hook-form";
 
 export interface IAuthContext {
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   user: IUser | null;
-  register: (email: string, password: string, username: string, name: string, lastName: string, birthdate: string, address: string, phone: string) => Promise<void>;
+  register: (
+    email: string,
+    password: string,
+    username: string,
+    name: string,
+    lastName: string,
+    birthdate: string,
+    address: string,
+    phone: string
+  ) => Promise<void>;
 }
 // Birthdate deberia ser string, tengo que hacer la conversion. Lo mismo para el metodo register mas abajo
 
@@ -38,8 +46,26 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
     await api.post("/logout");
   };
 
-  const register = async (email: string, password: string, username: string, name: string, lastName: string, birthdate: string, address: string, phone: string ) => {
-    const response = await api.post("/register", { email, password, username, name, lastName, birthdate, address, phone});
+  const register = async (
+    email: string,
+    password: string,
+    username: string,
+    name: string,
+    lastName: string,
+    birthdate: string,
+    address: string,
+    phone: string
+  ) => {
+    const response = await api.post("/register", {
+      email,
+      password,
+      username,
+      name,
+      lastName,
+      birthdate,
+      address,
+      phone,
+    });
     const userData = response.data;
     setUser(userData);
     sessionStorage.setItem("user", JSON.stringify(userData));
@@ -59,11 +85,11 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
   );
 }
 
-export const useAuth = () => {
+export function useAuth() {
   const authContext = useContext(AuthContext);
 
   if (!authContext)
     throw new Error("useAuth must be used within an AuthProvider");
 
   return authContext;
-};
+}

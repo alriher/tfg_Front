@@ -1,14 +1,16 @@
 import { Autocomplete, AutocompleteItem } from "@nextui-org/react";
 import { IControlledInput } from "../interfaces/controlledInput";
 import { IMunicipality } from "../interfaces/municipality";
-import { Controller } from "react-hook-form";
+import { Controller, UseFormRegister } from "react-hook-form";
 import { getErrorMessage } from "../services/ErrorServices";
+import { ISearchContextForm } from "../providers/SearchProvider";
 
 interface MunicipalitySelectorInputProps extends IControlledInput {
   municipalities: IMunicipality[];
   handleSelectionChange?: (id: any) => void;
+  register?: UseFormRegister<ISearchContextForm>;
   isDependent?: boolean;
-  selectedProvince?: string;
+  selectedProvince?: string | null;
 }
 
 export default function MunicipalitiesSelectorInput({
@@ -16,6 +18,7 @@ export default function MunicipalitiesSelectorInput({
   control,
   municipalities,
   handleSelectionChange,
+  register,
   isDependent,
   selectedProvince,
 }: MunicipalitySelectorInputProps) {
@@ -26,9 +29,16 @@ export default function MunicipalitiesSelectorInput({
       rules={{
         required: true,
       }}
-      render={({ field }) => (
+      render={({ field: { onChange, onBlur, value } }) => (
         <Autocomplete
-          {...field}
+          onBlur={onBlur}
+          onSelectionChange={(value) => {
+            onChange({ target: { value } });
+            if (handleSelectionChange) {
+              handleSelectionChange(value);
+            }
+          }}
+          selectedKey={value}
           isRequired
           isDisabled={isDependent && !selectedProvince}
           defaultItems={municipalities}
@@ -39,10 +49,12 @@ export default function MunicipalitiesSelectorInput({
           label="Municipios"
           placeholder="Selecciona un municipio"
           className="w-full lg:max-w-xs"
-          onSelectionChange={handleSelectionChange}
         >
           {(municipality) => (
-            <AutocompleteItem key={municipality.value}>
+            <AutocompleteItem
+              key={municipality.value}
+              value={municipality.value}
+            >
               {municipality.nombre}
             </AutocompleteItem>
           )}

@@ -100,7 +100,6 @@ const LoginForm = () => {
               )}
             />
           </div>
-          <div className={cn({ hidden: formError.length == 0 })}></div>
           <div className={cn({ hidden: formError.length == 0 })}>
             {formError.length != 0 ? (
               <span className="text-danger">{getErrorMessage(formError)}</span>

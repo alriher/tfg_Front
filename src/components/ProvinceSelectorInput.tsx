@@ -1,8 +1,12 @@
 import { Autocomplete, AutocompleteItem } from "@nextui-org/react";
-import { Controller } from "react-hook-form";
+import { Controller, UseFormRegister } from "react-hook-form";
 import { IControlledInput } from "../interfaces/controlledInput";
 import { getErrorMessage } from "../services/ErrorServices";
 import { IProvince } from "../interfaces/province";
+import {
+  ISearchContextForm,
+  useSearchFormContext,
+} from "../providers/SearchProvider";
 
 interface ProvinceSelectorProps extends IControlledInput {
   provinces: IProvince[];
@@ -10,34 +14,43 @@ interface ProvinceSelectorProps extends IControlledInput {
 }
 
 export default function ProvinceSelectorInput({
-  control,
-  errors,
   provinces,
   handleSelectionChange,
 }: ProvinceSelectorProps) {
+  const {
+    control,
+    formState: { errors },
+    setValue,
+  } = useSearchFormContext();
   return (
     <Controller
       control={control}
-      name="provinces"
+      name="province"
       rules={{
         required: true,
       }}
-      render={({ field }) => (
+      render={({ field: { onChange, onBlur, value } }) => (
         <Autocomplete
-          {...field}
-          isRequired
+          onBlur={onBlur}
+          onSelectionChange={(value) => {
+            onChange(value);
+            if (handleSelectionChange) {
+              handleSelectionChange(value);
+            }
+          }}
+          onClear={() => setValue("province", null)}
+          selectedKey={value}
           defaultItems={provinces}
-          isInvalid={!!errors.provinces}
-          errorMessage={getErrorMessage(errors.provinces?.type, {
+          isInvalid={!!errors.province}
+          errorMessage={getErrorMessage(errors.province?.type, {
             field: "provincia",
           })}
           label="Provincias"
-          placeholder="Busca una provincias"
+          placeholder="Busca una provincia"
           className="w-full lg:max-w-xs"
-          onSelectionChange={handleSelectionChange}
         >
-          {(province) => (
-            <AutocompleteItem key={province.value}>
+          {(province: IProvince) => (
+            <AutocompleteItem key={province.value} value={province.value}>
               {province.nombre}
             </AutocompleteItem>
           )}

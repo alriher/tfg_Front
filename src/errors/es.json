@@ -9,5 +9,11 @@
   "IS_URL": "El campo {{field}} debe ser una URL válida",
   "IS_STRING": "El campo {{field}} debe ser una cadena de texto",
   "IS_NUMBER": "El campo {{field}} debe ser un número",
-  "IS_BOOLEAN": "El campo {{field}} debe ser un booleano"
+  "IS_BOOLEAN": "El campo {{field}} debe ser un booleano",
+  "MIN_LENGTH": "El campo {{field}} debe tener al menos {{min}} caracteres",
+  "HAS_NUMBER": "El campo {{field}} debe tener al menos un número",
+  "HAS_UPPERCASE": "El campo {{field}} debe tener al menos una mayúscula",
+  "HAS_LOWERCASE": "El campo {{field}} debe tener al menos una minúscula",
+  "HAS_SPECIAL_CHARACTER": "El campo {{field}} debe tener al menos un carácter especial"
+
 }

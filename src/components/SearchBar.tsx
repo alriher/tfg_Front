@@ -1,37 +1,20 @@
-import {
-  Autocomplete,
-  AutocompleteItem,
-  Button,
-  DatePicker,
-  Select,
-  SelectItem,
-  TimeInput,
-} from "@nextui-org/react";
+import { Button } from "@nextui-org/react";
 import provinces from "../assets/provincias.json";
 import municipalities from "../assets/municipios.json";
-import { useState, useEffect, Key } from "react";
-import { IProvince } from "../interfaces/province";
+import { useState, useEffect } from "react";
 import SearchIcon from "./icons/SearchIcon";
-import { getErrorMessage } from "../services/ErrorServices";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { CalendarDate, today } from "@internationalized/date";
+import { SubmitHandler } from "react-hook-form";
 import EntryDateInput from "./EntryDateInput";
 import ScheduleInput from "./ScheduleInput";
 import ProvinceSelectorInput from "./ProvinceSelectorInput";
 import MunicipalitiesSelectorInput from "./MunicipalitySelectorInput";
 import { IMunicipality } from "../interfaces/municipality";
-
-interface ISearchBarFormInput {
-  province: string | null;
-  municipality: string | null;
-  entryDate: CalendarDate | null;
-  schedule: string | null;
-}
+import {
+  ISearchContextForm,
+  useSearchFormContext,
+} from "../providers/SearchProvider";
 
 export default function SearchBar() {
-  const [selectedProvincia, setSelectedProvincia] = useState<string | null>(
-    null
-  );
   const [filteredMunicipios, setFilteredMunicipios] = useState<IMunicipality[]>(
     []
   );
@@ -39,24 +22,19 @@ export default function SearchBar() {
   const {
     control,
     handleSubmit,
+    register,
+    watch,
     formState: { errors },
-  } = useForm({
-    defaultValues: {
-      province: null,
-      municipality: null,
-      entryDate: today("Europe/Madrid"),
-      schedule: null,
-    },
-  });
+  } = useSearchFormContext();
 
+  const selectedProvincia = watch("province");
   const handleSelectionChangeProvinces = (id: string | null) => {
     if (id === null) {
       setFilteredMunicipios([]);
     }
-    setSelectedProvincia(id);
   };
 
-  const onSubmit: SubmitHandler<ISearchBarFormInput> = (data) => {};
+  const onSubmit: SubmitHandler<ISearchContextForm> = (data) => {};
 
   useEffect(() => {
     if (selectedProvincia) {
@@ -83,7 +61,8 @@ export default function SearchBar() {
         errors={errors}
         municipalities={filteredMunicipios}
         isDependent={true}
-        selectedProvince={selectedProvincia as string}
+        selectedProvince={selectedProvincia}
+        register={register}
       />
       <EntryDateInput control={control} errors={errors} />
       <ScheduleInput control={control} errors={errors} />

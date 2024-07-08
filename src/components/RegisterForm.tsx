@@ -8,7 +8,7 @@ import EyeFilledIcon from "./EyeFilledIcon";
 import EyeSlashFilledIcon from "./EyeSlashFilledIcon";
 import { cn } from "../utils/cn";
 import { CalendarDate, today } from "@internationalized/date";
-import { isBeforeValidation } from "../services/ValidationService";
+import { isBeforeValidation, isEmailValidation, passwordHasLowercaseValidation, passwordHasNumberValidation, passwordHasSpecialCharacterValidation, passwordHasUppercaseValidation } from "../services/ValidationService";
 
 
 interface IUserRegisterFormInput {
@@ -18,7 +18,7 @@ interface IUserRegisterFormInput {
     username: string;
     name: string;
     lastName: string;
-    birthdate: CalendarDate; // deberia ser string
+    birthdate: CalendarDate;
     address: string;
     phone: string;
 }
@@ -44,15 +44,25 @@ const RegisterForm = () => {
     const password = watch("password", "");
     const [formError, setFormErrors] = React.useState<string>("");
     const onSubmit: SubmitHandler<IUserRegisterFormInput> = (data) =>
-        
+
         register(data.email, data.password, data.username, data.name, data.lastName, data.birthdate.toString(), data.address, data.phone)
             .then(() => {
                 const { from } = location.state || { from: { pathname: "/home" } };
                 navigate(from);
             })
             .catch((error) => {
-                setFormErrors("register" + error.response.status);
+                console.log("AQUI", error);
+                console.log("AQUI2", error.response);
+                console.log("AQUI3", error.response.data);
+                console.log("AQUI4", error.response.status);
+                console.log("AQUI5", error.response.data.message);
+                if (error.response.data.message == "User already exists") {
+                    setFormErrors(error.response.data.message);
+                } else {
+                    setFormErrors("register" + error.response.status);
+                }
                 setValue("password", "", { shouldValidate: true });
+                setValue("confirmPassword", "", { shouldValidate: true });
             });
     const [isVisible, setIsVisible] = React.useState(false);
     const toggleVisibility = () => setIsVisible(!isVisible);
@@ -69,7 +79,15 @@ const RegisterForm = () => {
                         <Controller
                             control={control}
                             name="email"
-                            rules={{ required: true }}
+                            rules={{
+                                required: true,
+                                validate: {
+                                    isEmailValidation: (value) => {
+                                        return isEmailValidation(value);
+
+                                    }
+                                }
+                            }}
                             render={({ field }) => (
                                 <Input
                                     {...field}
@@ -84,11 +102,26 @@ const RegisterForm = () => {
                             )}
                         />
                     </div>
+
+                    <div className={cn({ hidden: formError.length == 0 })}>
+                        {formError.length != 0 ? (
+                            <span className="text-danger">{getErrorMessage(formError)}</span>
+                        ) : null}
+                    </div>
                     <div>
                         <Controller
                             control={control}
                             name="password"
-                            rules={{ required: true }}
+                            rules={{
+                                required: true,
+                                minLength: 8,
+                                validate: {
+                                    passwordHasLowercaseValidation: passwordHasLowercaseValidation,
+                                    passwordHasNumberValidation: passwordHasNumberValidation,
+                                    passwordHasSpecialCharacterValidation: passwordHasSpecialCharacterValidation,
+                                    passwordHasUppercaseValidation: passwordHasUppercaseValidation,
+                                }
+                            }}
                             render={({ field }) => (
                                 <Input
                                     {...field}
@@ -117,7 +150,6 @@ const RegisterForm = () => {
                             )}
                         />
                     </div>
-                    <div className={cn({ hidden: formError.length == 0 })}></div>
                     <div className={cn({ hidden: formError.length == 0 })}>
                         {formError.length != 0 ? (
                             <span className="text-danger">{getErrorMessage(formError)}</span>
@@ -158,6 +190,11 @@ const RegisterForm = () => {
                                 />
                             )}
                         />
+                    </div>
+                    <div className={cn({ hidden: formError.length == 0 })}>
+                        {formError.length != 0 ? (
+                            <span className="text-danger">{getErrorMessage(formError)}</span>
+                        ) : null}
                     </div>
                     <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
                         <Controller
