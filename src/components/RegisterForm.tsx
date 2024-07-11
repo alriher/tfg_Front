@@ -8,7 +8,7 @@ import EyeFilledIcon from "./EyeFilledIcon";
 import EyeSlashFilledIcon from "./EyeSlashFilledIcon";
 import { cn } from "../utils/cn";
 import { CalendarDate, today } from "@internationalized/date";
-import { isBeforeValidation, isEmailValidation, passwordHasLowercaseValidation, passwordHasNumberValidation, passwordHasSpecialCharacterValidation, passwordHasUppercaseValidation } from "../services/ValidationService";
+import { confirmPasswordValidation, isBeforeValidation, isEmailValidation, passwordHasLowercaseValidation, passwordHasNumberValidation, passwordHasSpecialCharacterValidation, passwordHasUppercaseValidation } from "../services/ValidationService";
 
 
 interface IUserRegisterFormInput {
@@ -65,14 +65,16 @@ const RegisterForm = () => {
                 setValue("confirmPassword", "", { shouldValidate: true });
             });
     const [isVisible, setIsVisible] = React.useState(false);
+    const [isVisible2, setIsVisible2] = React.useState(false);
     const toggleVisibility = () => setIsVisible(!isVisible);
+    const toggleVisibility2 = () => setIsVisible2(!isVisible2);
 
     return (
         <div className="flex justify-center items-center min-h-screen bg-gray-100">
             <div className="bg-white p-8 rounded-lg shadow-md max-w-sm w-full">
                 <h2 className="text-2xl font-bold mb-6 text-center">Register</h2>
                 <form
-                    onSubmit={handleSubmit(onSubmit)}
+                    onSubmit={handleSubmit(onSubmit, (errors) => console.log(errors))}
                     className="flex gap-4 flex-col mb-4"
                 >
                     <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
@@ -130,6 +132,7 @@ const RegisterForm = () => {
                                     placeholder="Enter your password"
                                     errorMessage={getErrorMessage(errors.password?.type, {
                                         field: "contraseña",
+                                        min: 8,
                                     })}
                                     endContent={
                                         <button
@@ -138,14 +141,15 @@ const RegisterForm = () => {
                                             onClick={() => toggleVisibility()}
                                         >
                                             {isVisible ? (
-                                                <EyeSlashFilledIcon className="text-2xl text-default-400 pointer-events-none" />
+                                                <EyeSlashFilledIcon className="text-2xl text-default-400 pointer-events-none size-6" />
                                             ) : (
-                                                <EyeFilledIcon className="text-2xl text-default-400 pointer-events-none" />
+                                                <EyeFilledIcon className="text-2xl text-default-400 pointer-events-none size-6" />
                                             )}
                                         </button>
                                     }
                                     type={isVisible ? "text" : "password"}
                                     className="max-w-xs"
+                                    isInvalid={!!errors.password}
                                 />
                             )}
                         />
@@ -161,13 +165,14 @@ const RegisterForm = () => {
                             name="confirmPassword"
                             rules={{
                                 required: true,
-                                validate: (value) =>
-                                    value === password || "Las contraseñas no coinciden",
+                                validate: {
+                                    confirmPasswordValidation: confirmPassword => confirmPasswordValidation(password, confirmPassword)
+                                }
                             }}
                             render={({ field }) => (
                                 <Input
                                     {...field}
-                                    type="password"
+                                    type={isVisible2 ? "text" : "password"}
                                     label="Confirmar contraseña"
                                     placeholder="Enter your password again"
                                     isInvalid={!!errors.confirmPassword}
@@ -178,12 +183,12 @@ const RegisterForm = () => {
                                         <button
                                             className="focus:outline-none"
                                             type="button"
-                                            onClick={() => toggleVisibility()}
+                                            onClick={() => toggleVisibility2()}
                                         >
-                                            {isVisible ? (
-                                                <EyeSlashFilledIcon className="text-2xl text-default-400 pointer-events-none" />
+                                            {isVisible2 ? (
+                                                <EyeSlashFilledIcon className="text-2xl text-default-400 pointer-events-none size-6" />
                                             ) : (
-                                                <EyeFilledIcon className="text-2xl text-default-400 pointer-events-none" />
+                                                <EyeFilledIcon className="text-2xl text-default-400 pointer-events-none size-6" />
                                             )}
                                         </button>
                                     }

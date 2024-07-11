@@ -8,4 +8,7 @@ export enum ErrorTypes {
   passwordHasUppercaseValidation = "HAS_UPPERCASE",
   passwordHasLowercaseValidation = "HAS_LOWERCASE",
   passwordHasSpecialCharacterValidation = "HAS_SPECIAL_CHARACTER",
+  minLength = "MIN_LENGTH",
+  confirmPasswordValidation = "CONFIRM_PASSWORD",
+  
 }

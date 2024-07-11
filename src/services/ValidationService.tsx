@@ -35,6 +35,10 @@ export function passwordHasSpecialCharacterValidation(password: string) {
   const passwordRegex = /[^A-Za-z0-9]/;
   return passwordRegex.test(password);
 }
+
+export function confirmPasswordValidation(password: string, confirmPassword: string) {
+  return password === confirmPassword;
+}
                                         
 
 export function isPhoneValidation(phone: string) {

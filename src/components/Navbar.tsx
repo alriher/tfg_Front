@@ -47,7 +47,7 @@ export default function App() {
 
   return (
     <Navbar
-      className={isActiveRoute("/login") ? "absolute" : ""}
+      className={isActiveRoute("/login") || isActiveRoute("/register") ? "absolute" : ""} 
       isBordered
       onMenuOpenChange={setIsMenuOpen}
       classNames={{
