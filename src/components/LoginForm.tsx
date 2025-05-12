@@ -38,7 +38,13 @@ const LoginForm = () => {
             type: "userNotFound",
           });
         }
-        setFormErrors("login" + error.response.status);
+        if (error.response.data.message == "Invalid password") {
+          setError("password", {
+            type: "invalidPassword",
+          });
+        }
+
+        // setFormErrors("login" + error.response.status);
         setValue("password", "", { shouldValidate: true });
       });
   const [isVisible, setIsVisible] = React.useState(false);
