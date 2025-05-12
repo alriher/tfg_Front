@@ -1,4 +1,4 @@
-import { Button, DatePicker, Input, toggle } from "@nextui-org/react";
+import { Button, DatePicker, Input, Link } from "@nextui-org/react";
 import React from "react";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -57,8 +57,8 @@ const RegisterForm = () => {
                 console.log("AQUI3", error.response.data);
                 console.log("AQUI4", error.response.status);
                 console.log("AQUI5", error.response.data.message);
-                
-                
+
+
                 if (error.response.data.message == "User already exists") {
                     setError("email", {
                         type: "userAlreadyExists",
@@ -66,7 +66,7 @@ const RegisterForm = () => {
                     setError("username", {
                         type: "userAlreadyExists",
                     });
-                    
+
                     setFormErrors(error.response.data.message);
                     console.log("AQUI6", formError);
                 } else {
@@ -319,6 +319,15 @@ const RegisterForm = () => {
                         <span className="text-danger">{getErrorMessage(formError)}</span>
                     </div>
                 </form>
+                <div>
+                    <p>
+                        ¿Ya tienes cuenta? <Link
+                            href="/login"
+                        >
+                            Inicia Sesión
+                        </Link>
+                    </p>
+                </div>
             </div>
         </div>
     );
