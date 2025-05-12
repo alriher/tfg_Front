@@ -134,7 +134,7 @@ const LoginForm = () => {
           <Link>¿Olvidaste la contraseña?</Link>
           <p>
             ¿No tienes cuenta? <Link
-              onClick={() => navigate("/register")}
+              href="/register"
             >
               Regístrate
             </Link>
