@@ -56,7 +56,9 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
     address: string,
     phone: string
   ) => {
-    const response = await api.post("/register", {
+    const response = await api.post("/register", { 
+      // Probablemente sea /users/register porque en el backend la creación de usuarios se monta en /users. 
+      // La ruta del createUser es /users/, habria que cambiarla en el backend a /users/register
       email,
       password,
       username,

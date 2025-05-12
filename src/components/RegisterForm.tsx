@@ -58,6 +58,7 @@ const RegisterForm = () => {
                 console.log("AQUI5", error.response.data.message);
                 if (error.response.data.message == "User already exists") {
                     setFormErrors(error.response.data.message);
+                    console.log("AQUI6", formError);
                 } else {
                     setFormErrors("register" + error.response.status);
                 }
