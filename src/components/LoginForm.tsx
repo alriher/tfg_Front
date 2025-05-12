@@ -1,5 +1,5 @@
 import React from "react";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { Controller, set, SubmitHandler, useForm } from "react-hook-form";
 import { Button, Input, Link } from "@nextui-org/react";
 import EyeFilledIcon from "./EyeSlashFilledIcon";
 import EyeSlashFilledIcon from "./EyeSlashFilledIcon";
@@ -23,6 +23,7 @@ const LoginForm = () => {
     formState: { errors },
     setValue,
     control,
+    setError,
   } = useForm<IUserFormInput>();
   const [formError, setFormErrors] = React.useState<string>("");
   const onSubmit: SubmitHandler<IUserFormInput> = (data) =>
@@ -32,6 +33,11 @@ const LoginForm = () => {
         navigate(from);
       })
       .catch((error) => {
+        if (error.response.data.message == "User not found") {
+          setError("email", {
+            type: "userNotFound",
+          });
+        }
         setFormErrors("login" + error.response.status);
         setValue("password", "", { shouldValidate: true });
       });

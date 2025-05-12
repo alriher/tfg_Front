@@ -11,5 +11,6 @@ export enum ErrorTypes {
   minLength = "MIN_LENGTH",
   confirmPasswordValidation = "CONFIRM_PASSWORD",
   userAlreadyExists = "USER_ALREADY_EXISTS",
+  userNotFound = "USER_NOT_FOUND",
   
 }
