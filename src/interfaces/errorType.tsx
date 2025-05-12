@@ -10,5 +10,6 @@ export enum ErrorTypes {
   passwordHasSpecialCharacterValidation = "HAS_SPECIAL_CHARACTER",
   minLength = "MIN_LENGTH",
   confirmPasswordValidation = "CONFIRM_PASSWORD",
+  userAlreadyExists = "USER_ALREADY_EXISTS",
   
 }

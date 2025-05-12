@@ -33,6 +33,7 @@ const RegisterForm = () => {
         formState: { errors },
         setValue,
         control,
+        setError,
     } = useForm<IUserRegisterFormInput>(
         {
             defaultValues: {
@@ -56,7 +57,12 @@ const RegisterForm = () => {
                 console.log("AQUI3", error.response.data);
                 console.log("AQUI4", error.response.status);
                 console.log("AQUI5", error.response.data.message);
+                
+                
                 if (error.response.data.message == "User already exists") {
+                    setError("email", {
+                        type: "userAlreadyExists",
+                    });
                     setFormErrors(error.response.data.message);
                     console.log("AQUI6", formError);
                 } else {
@@ -87,7 +93,6 @@ const RegisterForm = () => {
                                 validate: {
                                     isEmailValidation: (value) => {
                                         return isEmailValidation(value);
-
                                     }
                                 }
                             }}
