@@ -45,7 +45,7 @@ const LoginForm = () => {
         }
 
         // setFormErrors("login" + error.response.status);
-        setValue("password", "", { shouldValidate: true });
+        setValue("password", "", { shouldValidate: false });
       });
   const [isVisible, setIsVisible] = React.useState(false);
   const toggleVisibility = () => setIsVisible(!isVisible);
