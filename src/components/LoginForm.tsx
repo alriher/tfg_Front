@@ -7,6 +7,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../providers/AuthProvider";
 import { getErrorMessage } from "../services/ErrorServices";
 import { cn } from "../utils/cn";
+import { isEmailValidation } from "../services/ValidationService";
 
 interface IUserFormInput {
   email: string;
@@ -36,8 +37,8 @@ const LoginForm = () => {
       });
   const [isVisible, setIsVisible] = React.useState(false);
   const toggleVisibility = () => setIsVisible(!isVisible);
-  
-  
+
+
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
@@ -51,7 +52,15 @@ const LoginForm = () => {
             <Controller
               control={control}
               name="email"
-              rules={{ required: true }}
+              rules={{
+                required: true,
+                validate: {
+                  isEmailValidation: (value) => {
+                    return isEmailValidation(value);
+                  }
+                }
+
+              }}
               render={({ field }) => (
                 <Input
                   {...field}

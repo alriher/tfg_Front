@@ -63,6 +63,10 @@ const RegisterForm = () => {
                     setError("email", {
                         type: "userAlreadyExists",
                     });
+                    setError("username", {
+                        type: "userAlreadyExists",
+                    });
+                    
                     setFormErrors(error.response.data.message);
                     console.log("AQUI6", formError);
                 } else {
