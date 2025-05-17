@@ -2,6 +2,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { ISpace } from "../interfaces/space";
 import { useState, useEffect } from "react";
 import { getSpaceById } from "../services/CommunitiesService";
+import { createBooking } from "../services/BookingService.tsx";
 import {
   Button,
   DatePicker,
@@ -58,13 +59,47 @@ export default function SpaceDetails() {
     }
   }, [id]);
 
-  const onSubmit: SubmitHandler<ISpaceFormInput> = (data) => {};
+  const onSubmit: SubmitHandler<ISpaceFormInput> = (data) => {
+
+    if (!user) {
+      return navigate("/login", { state: { from: `/spaces/${id}` } });
+    }
+    try {
+      // Convertir entryDate y schedule a objetos Date
+      const entryDate = data.entryDate;
+      const [startTime, endTime] = data.schedule.split("-");
+      const startDate = entryDate.toDate("Europe/Madrid");
+      const [sh, sm] = startTime.split(":").map(Number);
+      startDate.setHours(sh, sm, 0, 0);
+      const endDate = entryDate.toDate("Europe/Madrid");
+      const [eh, em] = endTime.split(":").map(Number);
+      endDate.setHours(eh, em, 0, 0);
+
+      // Crear la reserva
+      if (!space) {
+        alert("Espacio no encontrado.");
+        return;
+      }
+      createBooking(
+        Number(user.id),
+        Number(space.id),
+        startDate.toISOString(),
+        endDate.toISOString()
+      );
+
+      alert("Reserva creada con éxito");
+      navigate("/bookings");
+    } catch (err: any) {
+      console.error(err);
+      alert(err.response?.data?.message || "Error al crear la reserva.");
+    }
+  };
 
   if (!space) {
     return <div>Loading...</div>;
   }
 
-  function handleLoginNavigate(): void {
+  function handleLoginNavigate() {
     navigate("/login", { state: { from: `/spaces/${id}` } });
   }
 
