@@ -6,6 +6,7 @@ import {
   DropdownItem,
 } from "@nextui-org/react";
 import { IUser } from "../interfaces/user";
+import { useNavigate } from "react-router-dom";
 
 export default function ProfileAvatar({
   user,
@@ -14,6 +15,17 @@ export default function ProfileAvatar({
   user: IUser;
   logout: () => void;
 }) {
+
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    try {
+      logout();
+      navigate("/login");
+    } catch (error) {
+      console.error("Error al cerrar sesion:", error);
+    }
+  }
   return (
     <div className="flex items-center gap-4">
       <Dropdown>
@@ -35,7 +47,7 @@ export default function ProfileAvatar({
           <DropdownItem key="profile">Mi perfil</DropdownItem>
           <DropdownItem
             className="text-danger"
-            onPress={logout}
+            onPress={handleLogout}
             key="logout"
             color="danger"
           >
