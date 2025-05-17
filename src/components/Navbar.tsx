@@ -26,6 +26,7 @@ export default function App() {
   const mobileMenu: IMenuItem[] = [
     { item: "Inicio", route: "/home" },
     { item: "Comunidades", route: "/communities" },
+    { item: "Reservas", route: "/reservations" },
     { item: "Contacto", route: "/contact" },
     { item: "Iniciar sesión", route: "/login" },
     { item: "Regístrate", route: "/register" },
@@ -34,6 +35,7 @@ export default function App() {
   const menuItems: IMenuItem[] = [
     { item: "Inicio", route: "/home" },
     { item: "Comunidades", route: "/communities" },
+    { item: "Reservas", route: "/reservations" },
     { item: "Contacto", route: "/contact" },
   ];
 

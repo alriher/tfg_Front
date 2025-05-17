@@ -23,6 +23,7 @@ export default function SearchBar() {
     control,
     handleSubmit,
     register,
+    setValue,
     watch,
     formState: { errors },
   } = useSearchFormContext();
@@ -31,6 +32,7 @@ export default function SearchBar() {
   const handleSelectionChangeProvinces = (id: string | null) => {
     if (id === null) {
       setFilteredMunicipios([]);
+      setValue("municipality", null, { shouldValidate: true });
     }
   };
 
