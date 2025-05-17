@@ -16,7 +16,8 @@
   "HAS_LOWERCASE": "El campo {{field}} debe tener al menos una minúscula",
   "HAS_SPECIAL_CHARACTER": "El campo {{field}} debe tener al menos un carácter especial",
   "CONFIRM_PASSWORD": "Las contraseñas no coinciden",
-  "USER_ALREADY_EXISTS": "El usuario/correo ya existe",
+  "USER_ALREADY_EXISTS": "El usuario ya existe",
+  "EMAIL_ALREADY_EXISTS": "El correo ya existe",
   "USER_NOT_FOUND": "El usuario no existe",
   "INVALID_PASSWORD": "La contraseña es incorrecta"
 }

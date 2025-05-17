@@ -59,17 +59,26 @@ const RegisterForm = () => {
                 console.log("AQUI5", error.response.data.message);
 
 
-                if (error.response.data.message == "User already exists") {
+                if (error.response.data.message == "User and email already exists") {
                     setError("email", {
-                        type: "userAlreadyExists",
+                        type: "emailAlreadyExists",
                     });
                     setError("username", {
                         type: "userAlreadyExists",
                     });
-
-                    setFormErrors(error.response.data.message);
-                    console.log("AQUI6", formError);
-                } else {
+                    // setFormErrors(error.response.data.message);
+                    // console.log("AQUI6", formError);
+                } else if (error.response.data.message == "User already exists") {
+                    setError("username", {
+                        type: "userAlreadyExists",
+                    });
+                }
+                else if (error.response.data.message == "Email already exists") {
+                    setError("email", {
+                        type: "emailAlreadyExists",
+                    });
+                }
+                else {
                     setFormErrors("register" + error.response.status);
                 }
                 setValue("password", "", { shouldValidate: true });
@@ -115,11 +124,11 @@ const RegisterForm = () => {
                         />
                     </div>
 
-                    <div className={cn({ hidden: formError.length == 0 })}>
+                    {/* <div className={cn({ hidden: formError.length == 0 })}>
                         {formError.length != 0 ? (
                             <span className="text-danger">{getErrorMessage(formError)}</span>
                         ) : null}
-                    </div>
+                    </div> */}
                     <div>
                         <Controller
                             control={control}
@@ -164,11 +173,11 @@ const RegisterForm = () => {
                             )}
                         />
                     </div>
-                    <div className={cn({ hidden: formError.length == 0 })}>
+                    {/* <div className={cn({ hidden: formError.length == 0 })}>
                         {formError.length != 0 ? (
                             <span className="text-danger">{getErrorMessage(formError)}</span>
                         ) : null}
-                    </div>
+                    </div> */}
                     <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
                         <Controller
                             control={control}
@@ -206,11 +215,11 @@ const RegisterForm = () => {
                             )}
                         />
                     </div>
-                    <div className={cn({ hidden: formError.length == 0 })}>
+                    {/* <div className={cn({ hidden: formError.length == 0 })}>
                         {formError.length != 0 ? (
                             <span className="text-danger">{getErrorMessage(formError)}</span>
                         ) : null}
-                    </div>
+                    </div> */}
                     <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
                         <Controller
                             control={control}
@@ -315,9 +324,9 @@ const RegisterForm = () => {
                     <Button color="primary" className="font-semibold" type="submit">
                         Register
                     </Button>
-                    <div className={formError.length == 0 ? "hidden" : ""}>
+                    {/* <div className={formError.length == 0 ? "hidden" : ""}>
                         <span className="text-danger">{getErrorMessage(formError)}</span>
-                    </div>
+                    </div> */}
                 </form>
                 <div>
                     <p>
