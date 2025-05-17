@@ -73,14 +73,11 @@ export default function SpaceDetails() {
     try {
       // Convertir entryDate y schedule a objetos Date
       const entryDate = data.entryDate;
-      console.log("AQUI ENTRYDATE " + entryDate);
-      console.log("AQUI ENTRYDATE2 " + data.entryDate);
       const selectedSchedule = schedule.find(s => s.key === data.schedule);
       if (!selectedSchedule) {
         alert("Horario no válido.");
         return;
       }
-      console.log("AQUI SCHEDULE " + selectedSchedule.value);
       const [startTime, endTime] = selectedSchedule.value.split("-");
       const startDate = entryDate.toDate("Europe/Madrid");
       const [sh, sm] = startTime.split(":").map(Number);
@@ -89,8 +86,6 @@ export default function SpaceDetails() {
       const [eh, em] = endTime.split(":").map(Number);
       endDate.setHours(eh, em, 0, 0);
 
-      console.log("AQUI STARTDATE " + toLocalISOString(startDate));
-      console.log("AQUI ENDDATE " + toLocalISOString(endDate));
       // Crear la reserva
       if (!space) {
         alert("Espacio no encontrado.");
