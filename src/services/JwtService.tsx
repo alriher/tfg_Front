@@ -19,8 +19,24 @@ function addRefreshSubscriber(callback: () => void) {
 }
 
 // Request Interceptor
+
+// api.interceptors.request.use(
+//   (config) => {
+//     return config;
+//   },
+//   (error) => {
+//     return Promise.reject(error);
+//   }
+// );
+
 api.interceptors.request.use(
   (config) => {
+    // Obtener el token (ajusta la clave si usas otra)
+    const token = localStorage.getItem("token");
+    if (token) {
+      config.headers = config.headers || {};
+      config.headers.Authorization = `Bearer ${token}`;
+    }
     return config;
   },
   (error) => {

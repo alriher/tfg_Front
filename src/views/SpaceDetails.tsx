@@ -2,6 +2,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { ISpace } from "../interfaces/space";
 import { useState, useEffect } from "react";
 import { getSpaceById } from "../services/CommunitiesService";
+import { toLocalISOString } from "../services/DateFormatterService";
 import { createBooking } from "../services/BookingService.tsx";
 import {
   Button,
@@ -64,10 +65,23 @@ export default function SpaceDetails() {
     if (!user) {
       return navigate("/login", { state: { from: `/spaces/${id}` } });
     }
+
+    if (!data.schedule) {
+      alert("Selecciona la hora de la reserva.");
+      return;
+    }
     try {
       // Convertir entryDate y schedule a objetos Date
       const entryDate = data.entryDate;
-      const [startTime, endTime] = data.schedule.split("-");
+      console.log("AQUI ENTRYDATE " + entryDate);
+      console.log("AQUI ENTRYDATE2 " + data.entryDate);
+      const selectedSchedule = schedule.find(s => s.key === data.schedule);
+      if (!selectedSchedule) {
+        alert("Horario no válido.");
+        return;
+      }
+      console.log("AQUI SCHEDULE " + selectedSchedule.value);
+      const [startTime, endTime] = selectedSchedule.value.split("-");
       const startDate = entryDate.toDate("Europe/Madrid");
       const [sh, sm] = startTime.split(":").map(Number);
       startDate.setHours(sh, sm, 0, 0);
@@ -75,6 +89,8 @@ export default function SpaceDetails() {
       const [eh, em] = endTime.split(":").map(Number);
       endDate.setHours(eh, em, 0, 0);
 
+      console.log("AQUI STARTDATE " + toLocalISOString(startDate));
+      console.log("AQUI ENDDATE " + toLocalISOString(endDate));
       // Crear la reserva
       if (!space) {
         alert("Espacio no encontrado.");
@@ -83,8 +99,8 @@ export default function SpaceDetails() {
       createBooking(
         Number(user.id),
         Number(space.id),
-        startDate.toISOString(),
-        endDate.toISOString()
+        toLocalISOString(startDate),
+        toLocalISOString(endDate),
       );
 
       alert("Reserva creada con éxito");
