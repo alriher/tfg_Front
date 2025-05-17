@@ -41,8 +41,7 @@ export default function MunicipalitiesSelectorInput({
           selectedKey={value}
           isRequired
           isDisabled={isDependent && !selectedProvince}
-          // defaultItems={municipalities}
-          items={municipalities}
+          defaultItems={municipalities}
           isInvalid={!!errors.municipality}
           errorMessage={getErrorMessage(errors.municipality?.type, {
             field: "municipio",
