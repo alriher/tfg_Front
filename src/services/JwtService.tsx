@@ -29,21 +29,6 @@ api.interceptors.request.use(
   }
 );
 
-// api.interceptors.request.use(
-//   (config) => {
-//     // Obtener el token (ajusta la clave si usas otra)
-//     const token = localStorage.getItem("token");
-//     if (token) {
-//       config.headers = config.headers || {};
-//       config.headers.Authorization = `Bearer ${token}`;
-//     }
-//     return config;
-//   },
-//   (error) => {
-//     return Promise.reject(error);
-//   }
-// );
-
 // Response Interceptor
 api.interceptors.response.use(
   (response) => {
