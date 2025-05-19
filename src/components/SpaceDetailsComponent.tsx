@@ -1,9 +1,13 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { ISpace } from "../interfaces/space";
+import { IBooking } from "../interfaces/booking";
 import { useState, useEffect } from "react";
 import { getSpaceById } from "../services/CommunitiesService";
-import { toLocalISOString } from "../services/DateFormatterService";
-import { createBooking } from "../services/BookingService.tsx";
+import { toLocalSQLString } from "../services/DateFormatterService";
+import {
+  createBooking,
+  getBookingsBySpaceIdAndDate,
+} from "../services/BookingService.tsx";
 import {
   Button,
   DatePicker,
@@ -27,6 +31,7 @@ interface ISpaceFormInput {
   entryDate: CalendarDate;
   schedule: string;
   assistants: string;
+  // Booleano para ver si se reserva un hueco o un espacio
 }
 
 export default function SpaceDetailsComponent() {
@@ -35,6 +40,7 @@ export default function SpaceDetailsComponent() {
   const { user } = useAuth();
   const [space, setSpace] = useState<ISpace | null>(null);
   const [capacity, setCapacity] = useState<string[]>([]);
+  const [reservedSchedules, setReservedSchedules] = useState<string[]>([]);
   const navigate = useNavigate();
 
   const {
@@ -49,6 +55,27 @@ export default function SpaceDetailsComponent() {
     },
   });
 
+  const updateReservedSchedules = (date: CalendarDate) => {
+    if (space && date) {
+      console.log("ENTRY DATE" + date);
+      const dateStr = `${date.year}-${String(date.month).padStart(2, "0")}-${String(date.day).padStart(2, "0")}`;
+      console.log("DATE STR" + dateStr);
+      getBookingsBySpaceIdAndDate(space.id, dateStr).then((reservas: any) => {
+        // Si reservas es un solo objeto, conviértelo en array
+        const bookingsArray = Array.isArray(reservas) ? reservas : reservas ? [reservas] : [];
+        const reservedKeys = bookingsArray
+          .map((r) => {
+            const start = r.dateStart.slice(11, 16);
+            const end = r.dateEnd.slice(11, 16);
+            const found = schedule.find((s) => s.value === `${start}-${end}`);
+            return found?.key;
+          })
+          .filter((key): key is string => typeof key === "string");
+        setReservedSchedules(reservedKeys);
+      });
+    }
+  };
+
   useEffect(() => {
     if (id) {
       getSpaceById(id).then((space) => {
@@ -60,8 +87,28 @@ export default function SpaceDetailsComponent() {
     }
   }, [id]);
 
-  const onSubmit: SubmitHandler<ISpaceFormInput> = (data) => {
+  useEffect(() => {
+  if (space && control._formValues.entryDate) {
+    const date = control._formValues.entryDate;
+    console.log("ENTRY DATE" + date);
+    const dateStr = `${date.year}-${String(date.month).padStart(2, "0")}-${String(date.day).padStart(2, "0")}`;
+    console.log("DATE STR" + dateStr);
+    getBookingsBySpaceIdAndDate(space.id, dateStr).then(
+      (reservas: IBooking[]) => {
+        const reservedKeys = reservas
+          .map((r) => {
+            const start = r.dateStart.slice(11, 16);
+            const end = r.dateEnd.slice(11, 16);
+            const found = schedule.find((s) => s.value === `${start}-${end}`);
+            return found?.key;
+          })
+          .filter((key): key is string => typeof key === "string");
+        setReservedSchedules(reservedKeys);
+      });
+  }
+}, [space]);
 
+  const onSubmit: SubmitHandler<ISpaceFormInput> = (data) => {
     if (!user) {
       return navigate("/login", { state: { from: `/spaces/${id}` } });
     }
@@ -73,7 +120,8 @@ export default function SpaceDetailsComponent() {
     try {
       // Convertir entryDate y schedule a objetos Date
       const entryDate = data.entryDate;
-      const selectedSchedule = schedule.find(s => s.key === data.schedule);
+      console.log("ENTRY DATE" + entryDate);
+      const selectedSchedule = schedule.find((s) => s.key === data.schedule);
       if (!selectedSchedule) {
         alert("Horario no válido.");
         return;
@@ -94,8 +142,8 @@ export default function SpaceDetailsComponent() {
       createBooking(
         Number(user.id),
         Number(space.id),
-        toLocalISOString(startDate),
-        toLocalISOString(endDate),
+        toLocalSQLString(startDate),
+        toLocalSQLString(endDate)
       );
 
       alert("Reserva creada con éxito");
@@ -195,6 +243,7 @@ export default function SpaceDetailsComponent() {
                       isRequired={true}
                       className="w-full"
                       label="Fecha y hora de entrada"
+                      onBlur={() => updateReservedSchedules(field.value)}
                     />
                   )}
                 />
@@ -215,9 +264,12 @@ export default function SpaceDetailsComponent() {
                         field: "hora de la reserva",
                       })}
                       className="w-full"
+                      disabledKeys={reservedSchedules}
                     >
                       {schedule.map((s) => (
-                        <SelectItem key={s.key}>{s.value}</SelectItem>
+                        <SelectItem key={s.key}>
+                          {s.value}
+                        </SelectItem>
                       ))}
                     </Select>
                   )}
