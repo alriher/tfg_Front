@@ -1,4 +1,5 @@
 import axios from "axios";
+import { convertDates } from "../utils/convertDates";
 
 const BACKEND_URL = import.meta.env.VITE_BACK_URL;
 
@@ -27,6 +28,14 @@ api.interceptors.request.use(
   (error) => {
     return Promise.reject(error);
   }
+);
+
+api.interceptors.response.use(
+  (response) => {
+    response.data = convertDates(response.data);
+    return response;
+  },
+  (error) => Promise.reject(error)
 );
 
 // Response Interceptor

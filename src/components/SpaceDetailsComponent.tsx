@@ -27,6 +27,7 @@ import {
 } from "../services/ValidationService";
 import { schedule } from "../assets/schedules";
 import useDateFormatter from "../services/DateFormatterService";
+import moment from "moment";
 interface ISpaceFormInput {
   entryDate: CalendarDate;
   schedule: string;
@@ -57,16 +58,14 @@ export default function SpaceDetailsComponent() {
 
   const updateReservedSchedules = (date: CalendarDate) => {
     if (space && date) {
-      console.log("ENTRY DATE" + date);
       const dateStr = `${date.year}-${String(date.month).padStart(2, "0")}-${String(date.day).padStart(2, "0")}`;
-      console.log("DATE STR" + dateStr);
       getBookingsBySpaceIdAndDate(space.id, dateStr).then((reservas: any) => {
         // Si reservas es un solo objeto, conviértelo en array
         const bookingsArray = Array.isArray(reservas) ? reservas : reservas ? [reservas] : [];
         const reservedKeys = bookingsArray
           .map((r) => {
-            const start = r.dateStart.slice(11, 16);
-            const end = r.dateEnd.slice(11, 16);
+            const start = moment(r.dateStart).format("HH:00");
+            const end = moment(r.dateEnd).format("HH:00");
             const found = schedule.find((s) => s.value === `${start}-${end}`);
             return found?.key;
           })
@@ -88,25 +87,23 @@ export default function SpaceDetailsComponent() {
   }, [id]);
 
   useEffect(() => {
-  if (space && control._formValues.entryDate) {
-    const date = control._formValues.entryDate;
-    console.log("ENTRY DATE" + date);
-    const dateStr = `${date.year}-${String(date.month).padStart(2, "0")}-${String(date.day).padStart(2, "0")}`;
-    console.log("DATE STR" + dateStr);
-    getBookingsBySpaceIdAndDate(space.id, dateStr).then(
-      (reservas: IBooking[]) => {
-        const reservedKeys = reservas
-          .map((r) => {
-            const start = r.dateStart.slice(11, 16);
-            const end = r.dateEnd.slice(11, 16);
-            const found = schedule.find((s) => s.value === `${start}-${end}`);
-            return found?.key;
-          })
-          .filter((key): key is string => typeof key === "string");
-        setReservedSchedules(reservedKeys);
-      });
-  }
-}, [space]);
+    if (space && control._formValues.entryDate) {
+      const date = control._formValues.entryDate;
+      const dateStr = `${date.year}-${String(date.month).padStart(2, "0")}-${String(date.day).padStart(2, "0")}`;
+      getBookingsBySpaceIdAndDate(space.id, dateStr).then(
+        (reservas: IBooking[]) => {
+          const reservedKeys = reservas
+            .map((r) => {
+              const start = moment(r.dateStart).format("HH:00");
+              const end = moment(r.dateEnd).format("HH:00");
+              const found = schedule.find((s) => s.value === `${start}-${end}`);
+              return found?.key;
+            })
+            .filter((key): key is string => typeof key === "string");
+          setReservedSchedules(reservedKeys);
+        });
+    }
+  }, [space]);
 
   const onSubmit: SubmitHandler<ISpaceFormInput> = (data) => {
     if (!user) {
@@ -127,12 +124,12 @@ export default function SpaceDetailsComponent() {
         return;
       }
       const [startTime, endTime] = selectedSchedule.value.split("-");
-      const startDate = entryDate.toDate("Europe/Madrid");
-      const [sh, sm] = startTime.split(":").map(Number);
-      startDate.setHours(sh, sm, 0, 0);
-      const endDate = entryDate.toDate("Europe/Madrid");
-      const [eh, em] = endTime.split(":").map(Number);
-      endDate.setHours(eh, em, 0, 0);
+      const dateStr = `${entryDate.year}-${String(entryDate.month).padStart(2, "0")}-${String(entryDate.day).padStart(2, "0")}`;
+      const dateStart = `${dateStr} ${startTime}:00`;
+      const dateEnd = `${dateStr} ${endTime}:00`;
+
+      console.log("DATE START" + dateStart);
+      console.log("DATE END" + dateEnd);
 
       // Crear la reserva
       if (!space) {
@@ -142,8 +139,8 @@ export default function SpaceDetailsComponent() {
       createBooking(
         Number(user.id),
         Number(space.id),
-        toLocalSQLString(startDate),
-        toLocalSQLString(endDate)
+        dateStart,
+        dateEnd
       );
 
       alert("Reserva creada con éxito");
