@@ -1,4 +1,6 @@
 import { now } from "@internationalized/date";
+import { today } from "@internationalized/date";
+import type { CalendarDate } from "@internationalized/date";
 
 export function isAfterControlValidation(time: any, controls: any) {
   console.log("isAfterValidation", time, controls);
@@ -8,6 +10,16 @@ export function isAfterControlValidation(time: any, controls: any) {
 export function isAfterNowValidation(selectedTime: any) {
   const comparisonTime = now("Europe/Madrid");
   return selectedTime.compare(comparisonTime) >= 0;
+}
+
+export function isAfterOrEqualToday(selectedDate: CalendarDate) {
+  const todayDate = today("Europe/Madrid");
+  const result =
+    selectedDate.year > todayDate.year ||
+    (selectedDate.year === todayDate.year && selectedDate.month > todayDate.month) ||
+    (selectedDate.year === todayDate.year && selectedDate.month === todayDate.month && selectedDate.day >= todayDate.day);
+  console.log("Validando fecha:", selectedDate, "Hoy:", todayDate, "¿Es válida?", result);
+  return result;
 }
 
 export function isBeforeValidation(selectedTime: any, comparisonTime: any) {
@@ -39,7 +51,7 @@ export function passwordHasSpecialCharacterValidation(password: string) {
 export function confirmPasswordValidation(password: string, confirmPassword: string) {
   return password === confirmPassword;
 }
-                                        
+
 
 export function isPhoneValidation(phone: string) {
   const phoneRegex = /^\d{9}$/;

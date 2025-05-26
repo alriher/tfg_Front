@@ -13,4 +13,5 @@ export interface ISpace {
   bookings: IBooking[];
   createdAt: string;
   updatedAt: string;
+  isSlotBased: boolean;
 }

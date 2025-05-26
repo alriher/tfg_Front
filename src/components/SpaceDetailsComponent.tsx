@@ -1,9 +1,8 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { ISpace } from "../interfaces/space";
 import { IBooking } from "../interfaces/booking";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { getSpaceById } from "../services/CommunitiesService";
-import { toLocalSQLString } from "../services/DateFormatterService";
 import {
   createBooking,
   getBookingsBySpaceIdAndDate,
@@ -17,12 +16,12 @@ import {
   Select,
   SelectItem,
 } from "@nextui-org/react";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { CalendarDate, today, ZonedDateTime } from "@internationalized/date";
+import { Controller, SubmitHandler, useForm, useWatch } from "react-hook-form";
+import { CalendarDate, today } from "@internationalized/date";
 import { useAuth } from "../providers/AuthProvider";
 import { getErrorMessage } from "../services/ErrorServices";
 import {
-  isAfterNowValidation,
+  isAfterOrEqualToday,
   isBeforeValidation,
 } from "../services/ValidationService";
 import { schedule } from "../assets/schedules";
@@ -32,7 +31,6 @@ interface ISpaceFormInput {
   entryDate: CalendarDate;
   schedule: string;
   assistants: string;
-  // Booleano para ver si se reserva un hueco o un espacio
 }
 
 export default function SpaceDetailsComponent() {
@@ -41,12 +39,16 @@ export default function SpaceDetailsComponent() {
   const { user } = useAuth();
   const [space, setSpace] = useState<ISpace | null>(null);
   const [capacity, setCapacity] = useState<string[]>([]);
-  const [reservedSchedules, setReservedSchedules] = useState<string[]>([]);
+  const [fullSchedules, setFullSchedules] = useState<string[]>([]);
+  const [maxAssistants, setMaxAssistants] = useState(1);
+  const assistantsPerHourRef = useRef<{ [key: string]: number }>({});
   const navigate = useNavigate();
 
   const {
     control,
     handleSubmit,
+    trigger,
+    setValue,
     formState: { errors },
   } = useForm({
     defaultValues: {
@@ -56,28 +58,22 @@ export default function SpaceDetailsComponent() {
     },
   });
 
-  const updateReservedSchedules = (date: CalendarDate) => {
-    if (space && date) {
-      const dateStr = `${date.year}-${String(date.month).padStart(2, "0")}-${String(date.day).padStart(2, "0")}`;
-      getBookingsBySpaceIdAndDate(space.id, dateStr).then((reservas: any) => {
-        // Si reservas es un solo objeto, conviértelo en array
-        const bookingsArray = Array.isArray(reservas) ? reservas : reservas ? [reservas] : [];
-        const reservedKeys = bookingsArray
-          .map((r) => {
-            const start = moment(r.dateStart).format("HH:00");
-            const end = moment(r.dateEnd).format("HH:00");
-            const found = schedule.find((s) => s.value === `${start}-${end}`);
-            return found?.key;
-          })
-          .filter((key): key is string => typeof key === "string");
-        setReservedSchedules(reservedKeys);
-      });
-    }
-  };
+  const entryDate = useWatch({ control, name: "entryDate" });
+  useEffect(() => {
+    setValue("schedule", "");
+    trigger("schedule"); // fuerza la validación y el render del select
+    setValue("assistants", "");
+  }, [entryDate, setValue, trigger]);
+
+  const selectedSchedule = useWatch({ control, name: "schedule" });
+  useEffect(() => {
+    setValue("assistants", "");
+  }, [selectedSchedule, setValue]);
 
   useEffect(() => {
     if (id) {
       getSpaceById(id).then((space) => {
+        console.log("SPACE", space);
         setSpace(space);
         setCapacity(
           Array.from({ length: space.capacity }, (_, i) => String(i + 1))
@@ -88,22 +84,46 @@ export default function SpaceDetailsComponent() {
 
   useEffect(() => {
     if (space && control._formValues.entryDate) {
-      const date = control._formValues.entryDate;
-      const dateStr = `${date.year}-${String(date.month).padStart(2, "0")}-${String(date.day).padStart(2, "0")}`;
-      getBookingsBySpaceIdAndDate(space.id, dateStr).then(
-        (reservas: IBooking[]) => {
-          const reservedKeys = reservas
-            .map((r) => {
-              const start = moment(r.dateStart).format("HH:00");
-              const end = moment(r.dateEnd).format("HH:00");
-              const found = schedule.find((s) => s.value === `${start}-${end}`);
-              return found?.key;
-            })
-            .filter((key): key is string => typeof key === "string");
-          setReservedSchedules(reservedKeys);
-        });
+      loadBookingsForDate(control._formValues.entryDate);
     }
+    // Solo cuando el espacio esté cargado o cambie la fecha por defecto
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [space]);
+
+  useEffect(() => {
+    if (space && selectedSchedule) {
+      const reserved = assistantsPerHourRef.current[selectedSchedule] || 0;
+      const max = Math.max(space.capacity - reserved, 0);
+      setMaxAssistants(max);
+      if (Number(control._formValues.assistants) > max) {
+        setValue("assistants", "");
+      }
+    } else {
+      setMaxAssistants(1);
+    }
+  }, [selectedSchedule, space, setValue, control._formValues.assistants]);
+
+  const loadBookingsForDate = async (date: CalendarDate) => {
+    if (space && date) {
+      const dateStr = `${date.year}-${String(date.month).padStart(2, "0")}-${String(date.day).padStart(2, "0")}`;
+      const reservas = await getBookingsBySpaceIdAndDate(space.id, dateStr);
+      const assistantsPerHour: { [key: string]: number } = {};
+      reservas.forEach((r: IBooking) => {
+        const start = moment(r.dateStart).format("HH:mm");
+        const end = moment(r.dateEnd).format("HH:mm");
+        const scheduleValue = `${start}-${end}`;
+        const scheduleKey = schedule.find(s => s.value === scheduleValue)?.key;
+        if (scheduleKey) {
+          assistantsPerHour[scheduleKey] = (assistantsPerHour[scheduleKey] || 0) + (r.assistants || 1);
+        }
+      });
+      assistantsPerHourRef.current = assistantsPerHour;
+      const full = Object.entries(assistantsPerHour)
+        .filter(([_, count]) => count >= space.capacity)
+        .map(([key]) => key);
+      setFullSchedules(full);
+    }
+  };
 
   const onSubmit: SubmitHandler<ISpaceFormInput> = (data) => {
     if (!user) {
@@ -115,7 +135,6 @@ export default function SpaceDetailsComponent() {
       return;
     }
     try {
-      // Convertir entryDate y schedule a objetos Date
       const entryDate = data.entryDate;
       console.log("ENTRY DATE" + entryDate);
       const selectedSchedule = schedule.find((s) => s.key === data.schedule);
@@ -131,16 +150,18 @@ export default function SpaceDetailsComponent() {
       console.log("DATE START" + dateStart);
       console.log("DATE END" + dateEnd);
 
-      // Crear la reserva
       if (!space) {
         alert("Espacio no encontrado.");
         return;
       }
+
+      console.log("NUMERO DE ASISTENTES" + Number(data.assistants));
       createBooking(
         Number(user.id),
         Number(space.id),
         dateStart,
-        dateEnd
+        dateEnd,
+        Number(data.assistants)
       );
 
       alert("Reserva creada con éxito");
@@ -158,6 +179,8 @@ export default function SpaceDetailsComponent() {
   function handleLoginNavigate() {
     navigate("/login", { state: { from: `/spaces/${id}` } });
   }
+
+  console.log("isSlotBased:", space?.isSlotBased);
 
   return (
     <div className="flex items-center justify-center container m-auto">
@@ -214,7 +237,7 @@ export default function SpaceDetailsComponent() {
                   rules={{
                     required: true,
                     validate: {
-                      isAfterNow: isAfterNowValidation,
+                      isAfterNow: isAfterOrEqualToday,
                       isBefore: (value) =>
                         isBeforeValidation(
                           value,
@@ -240,7 +263,11 @@ export default function SpaceDetailsComponent() {
                       isRequired={true}
                       className="w-full"
                       label="Fecha y hora de entrada"
-                      onBlur={() => updateReservedSchedules(field.value)}
+                      onBlur={() => {
+                        trigger("entryDate"); // <-- fuerza validación al salir del campo
+                        loadBookingsForDate(field.value);
+                        setValue("assistants", "");
+                      }}
                     />
                   )}
                 />
@@ -250,47 +277,73 @@ export default function SpaceDetailsComponent() {
                   rules={{
                     required: true,
                   }}
-                  render={({ field }) => (
-                    <Select
-                      {...field}
-                      placeholder="Selecciona la hora de la reserva"
-                      label="Hora de la reserva"
-                      isRequired={true}
-                      isInvalid={!!errors.schedule}
-                      errorMessage={getErrorMessage(errors.schedule?.type, {
-                        field: "hora de la reserva",
-                      })}
-                      className="w-full"
-                      disabledKeys={reservedSchedules}
-                    >
-                      {schedule.map((s) => (
-                        <SelectItem key={s.key}>
-                          {s.value}
-                        </SelectItem>
-                      ))}
-                    </Select>
-                  )}
+                  render={({ field }) => {
+                    const entryDate = control._formValues.entryDate;
+                    const now = today("Europe/Madrid").toDate("Europe/Madrid");
+                    const isToday =
+                      entryDate &&
+                      entryDate.year === now.getFullYear() &&
+                      entryDate.month === now.getMonth() + 1 &&
+                      entryDate.day === now.getDate();
+
+                    const currentHour = new Date().getHours();
+                    const disableSchedule = !!errors.entryDate;
+
+                    return (
+                      <Select
+                        key={entryDate ? `${entryDate.year}-${entryDate.month}-${entryDate.day}` : "select"}
+                        {...field}
+                        placeholder="Selecciona la hora de la reserva"
+                        label="Hora de la reserva"
+                        isRequired={true}
+                        className="w-full"
+                        disabledKeys={fullSchedules}
+                        isDisabled={disableSchedule}
+                        onBlur={() => setValue("assistants", "")}
+                      >
+                        {schedule.map((s) => {
+                          const [startHour] = s.value.split(":");
+                          const hour = parseInt(startHour, 10);
+                          const isPast = isToday && hour <= currentHour;
+                          return (
+                            <SelectItem key={s.key} isDisabled={isPast}>
+                              {s.value}
+                            </SelectItem>
+                          );
+                        })}
+                      </Select>
+                    );
+                  }}
                 />
                 <Controller
                   control={control}
                   name="assistants"
                   rules={{ required: true }}
                   render={({ field }) => (
-                    <Select
-                      {...field}
-                      placeholder="Selecciona el número de asistentes"
-                      label="Asistentes"
-                      isRequired={true}
-                      isInvalid={!!errors.assistants}
-                      errorMessage={getErrorMessage(errors.assistants?.type, {
-                        field: "asistentes",
-                      })}
-                      className="col-span-2"
-                    >
-                      {capacity.map((c) => (
-                        <SelectItem key={c}>{c}</SelectItem>
-                      ))}
-                    </Select>
+                    <>
+                      <Select
+                        {...field}
+                        placeholder={space?.isSlotBased ? "Selecciona el número de asistentes" : "Selecciona el número de espacios"}
+                        label={space?.isSlotBased ? "Asistentes" : "Espacios"}
+                        isRequired={true}
+                        isInvalid={!!errors.assistants}
+                        errorMessage={getErrorMessage(errors.assistants?.type, {
+                          field: space?.isSlotBased ? "asistentes" : "espacios",
+                        })}
+                        className="col-span-2"
+                        isDisabled={maxAssistants === 0 || !selectedSchedule}
+                      >
+                        {Array.from({ length: maxAssistants }, (_, i) => String(i + 1)).map((c) => (
+                          <SelectItem key={c}>{c}</SelectItem>
+                        ))}
+                      </Select>
+                      {selectedSchedule && (
+                        <div className="text-xs text-gray-500 mt-1">
+                          {space?.isSlotBased ? "Plazas libres para esta hora: " : "Espacios libres para esta hora: "}
+                          <b>{maxAssistants}</b>
+                        </div>
+                      )}
+                    </>
                   )}
                 />
                 <Button type="submit" className="col-span-2" color="primary">
@@ -308,3 +361,4 @@ export default function SpaceDetailsComponent() {
     </div>
   );
 }
+

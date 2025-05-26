@@ -4,13 +4,15 @@ export const createBooking = async (
   userId: number,
   spaceId: number,
   dateStart: string,
-  dateEnd: string
+  dateEnd: string,
+  assistants: number
 ) => {
   const response = await api.post("/bookings/", {
     userId,
     spaceId,
     dateStart,
     dateEnd,
+    assistants,
   });
   return response.data;
 };

@@ -7,6 +7,7 @@ import Login from "./views/Login";
 import { NextUIProvider } from "@nextui-org/react";
 import SpaceDetails from "./views/SpaceDetails";
 import Register from "./views/Register";
+import Reservations from "./views/Bookings";
 
 function App() {
   const navigate = useNavigate();
@@ -20,6 +21,7 @@ function App() {
         <Route path="/spaces/:id" element={<SpaceDetails />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/bookings" element={<Reservations />} />
       </Routes>
     </NextUIProvider>
   );
