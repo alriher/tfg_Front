@@ -1,7 +1,7 @@
 {
   "REQUIRED": "El campo {{field}} es obligatorio",
   "LOGIN_400": "Email o contraseña incorrectos",
-  "IS_AFTER_NOW": "La fecha debe ser posterior a la fecha actual",
+  "IS_AFTER_NOW": "La fecha debe ser igual o posterior a la fecha actual",
   "IS_BEFORE": "La fecha debe ser anterior a {{date}}",
   "MIN": "El campo {{field}} debe tener al menos {{min}} caracteres",
   "MAX": "El campo {{field}} debe tener como máximo {{max}} caracteres",

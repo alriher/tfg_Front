@@ -2,7 +2,7 @@ import { Card, CardBody, CardFooter, Image, Button } from "@nextui-org/react";
 import { ISpace } from "../interfaces/space";
 import { useNavigate } from "react-router-dom";
 
-export default function SpaceCard({ space, showButtons, onEdit, onCancel, booking }: { space: ISpace, showButtons?: boolean, onEdit?: () => void, onCancel?: () => void, booking?: { dateStart: string, dateEnd: string } }) {
+export default function SpaceCard({ space, showButtons, onEdit, onCancel, booking }: { space: ISpace, showButtons?: boolean, onEdit?: () => void, onCancel?: () => void, booking?: { dateStart: string, dateEnd: string, assistants?: number } }) {
   const navigate = useNavigate();
   console.log("BUTTONS?", showButtons);
   return (
@@ -41,9 +41,25 @@ export default function SpaceCard({ space, showButtons, onEdit, onCancel, bookin
         <b>{space.name}</b>
         <p className="text-default-500 text-sm">{space.address}</p>
         {showButtons && booking && (
-          <p className="text-xs text-default-600 mt-1">
-            {new Date(booking.dateStart).toLocaleString()} - {new Date(booking.dateEnd).toLocaleString()}
-          </p>
+          <>
+            <p className="text-xs text-default-600 mt-1">
+              {(() => {
+                const start = new Date(booking.dateStart);
+                const end = new Date(booking.dateEnd);
+                const day = start.getDate();
+                const month = start.getMonth() + 1;
+                const year = start.getFullYear();
+                const startHour = start.getHours().toString().padStart(2, '0');
+                const startMin = start.getMinutes().toString().padStart(2, '0');
+                const endHour = end.getHours().toString().padStart(2, '0');
+                const endMin = end.getMinutes().toString().padStart(2, '0');
+                return `${day}/${month}/${year}, ${startHour}:${startMin}-${endHour}:${endMin}`;
+              })()}
+            </p>
+            <p className="text-xs text-default-600 mt-1">
+              {space.isSlotBased ? 'Asistentes' : 'Espacios'} reservados: {booking.assistants}
+            </p>
+          </>
         )}
       </CardFooter>
     </Card>

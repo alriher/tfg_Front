@@ -3,7 +3,7 @@ import { getErrorMessage } from "../services/ErrorServices";
 import { DatePicker } from "@nextui-org/react";
 import { Controller } from "react-hook-form";
 import {
-  isAfterNowValidation,
+  isAfterOrEqualToday,
   isBeforeValidation,
 } from "../services/ValidationService";
 import useDateFormatter from "../services/DateFormatterService";
@@ -25,7 +25,7 @@ export default function EntryDateInput({
       rules={{
         required: true,
         validate: {
-          isAfterNow: isAfterNowValidation,
+          isAfterNow: isAfterOrEqualToday,
           isBefore: (value) =>
             isBeforeValidation(
               value,

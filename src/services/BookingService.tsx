@@ -29,3 +29,22 @@ export const getBookingsByUserId = async (userId: number) => {
   const response = await api.get(`/bookings/user/${userId}`);
   return response.data;
 };
+
+export const cancelBooking = async (bookingId: number) => {
+  const response = await api.delete(`/bookings/${bookingId}`);
+  return response.data;
+};
+
+export const updateBooking = async (
+  bookingId: number,
+  dateStart: string,
+  dateEnd: string,
+  assistants: number
+) => {
+  const response = await api.put(`/bookings/${bookingId}`, {
+    dateStart,
+    dateEnd,
+    assistants,
+  });
+  return response.data;
+};
