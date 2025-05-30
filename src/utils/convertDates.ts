@@ -17,10 +17,8 @@ export const convertDates = <T>(input: T, timeZone = 'Europe/Madrid'): T => {
       return newObj;
     }
 
-    console.log('VALORVALOR:', value);
     if (value instanceof Date || isIsoDate(value)) {
       
-      console.log('Converting date:', value);
       return new Intl.DateTimeFormat('es-ES', {
 
         timeZone,

@@ -18,7 +18,6 @@ export function isAfterOrEqualToday(selectedDate: CalendarDate) {
     selectedDate.year > todayDate.year ||
     (selectedDate.year === todayDate.year && selectedDate.month > todayDate.month) ||
     (selectedDate.year === todayDate.year && selectedDate.month === todayDate.month && selectedDate.day >= todayDate.day);
-  console.log("Validando fecha:", selectedDate, "Hoy:", todayDate, "¿Es válida?", result);
   return result;
 }
 

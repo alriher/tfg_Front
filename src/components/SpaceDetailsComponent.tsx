@@ -180,8 +180,6 @@ export default function SpaceDetailsComponent() {
     navigate("/login", { state: { from: `/spaces/${id}` } });
   }
 
-  console.log("isSlotBased:", space?.isSlotBased);
-
   return (
     <div className="flex items-center justify-center container m-auto">
       <div className="grid grid-cols-2 gap-6 px-4 py-12">
@@ -210,17 +208,6 @@ export default function SpaceDetailsComponent() {
               ipsum dolor, sit amet consectetur adipisicing elit. Ducimus quidem
               accusantium praesentium dolores, placeat natus quia, qui incidunt
               iusto sed, magni aliquid. Animi molestias sit tempore cumque
-              architecto fuga veniam. lorem ipsum dolor sit amet, consectetur
-              adipisicing elit. Aperiam, eveniet. Doloremque adipisci obcaecati
-              est libero, labore nam fuga provident fugit, et ea suscipit iure
-              quod distinctio dolorem quos voluptate mollitia. Lorem ipsum dolor
-              sit amet, consectetur adipisicing elit. Ea beatae sint accusamus
-              distinctio doloribus voluptatem velit assumenda esse reprehenderit
-              ut consequatur debitis dolor obcaecati, at qui quas, eveniet atque
-              quis. Lorem ipsum dolor, sit amet consectetur adipisicing elit.
-              Ducimus quidem accusantium praesentium dolores, placeat natus
-              quia, qui incidunt iusto sed, magni aliquid. Animi molestias sit
-              tempore cumque
             </p>
           </div>
           <div>
@@ -332,17 +319,16 @@ export default function SpaceDetailsComponent() {
                         })}
                         className="col-span-2"
                         isDisabled={maxAssistants === 0 || !selectedSchedule}
+                        description={
+                          selectedSchedule ?
+                            `${space?.isSlotBased ? "Plazas" : "Espacios"} libres para esta hora: ${maxAssistants}` :
+                            ""
+                        }
                       >
                         {Array.from({ length: maxAssistants }, (_, i) => String(i + 1)).map((c) => (
                           <SelectItem key={c}>{c}</SelectItem>
                         ))}
                       </Select>
-                      {selectedSchedule && (
-                        <div className="text-xs text-gray-500 mt-1">
-                          {space?.isSlotBased ? "Plazas libres para esta hora: " : "Espacios libres para esta hora: "}
-                          <b>{maxAssistants}</b>
-                        </div>
-                      )}
                     </>
                   )}
                 />
