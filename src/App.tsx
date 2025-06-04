@@ -8,6 +8,10 @@ import { NextUIProvider } from "@nextui-org/react";
 import SpaceDetails from "./views/SpaceDetails";
 import Register from "./views/Register";
 import Bookings from "./views/Bookings";
+import AdminUsers from "./views/AdminUsers";
+import AdminSpaces from "./views/AdminSpaces";
+import AdminBookings from "./views/AdminBookings";
+import { RequireAdmin } from "./services/AdminServices";
 
 function App() {
   const navigate = useNavigate();
@@ -22,6 +26,30 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/bookings" element={<Bookings />} />
+        <Route
+          path="/admin/users"
+          element={
+            <RequireAdmin>
+              <AdminUsers />
+            </RequireAdmin>
+          }
+        />
+        <Route
+          path="/admin/spaces"
+          element={
+            <RequireAdmin>
+              <AdminSpaces />
+            </RequireAdmin>
+          }
+        />
+        <Route
+          path="/admin/bookings"
+          element={
+            <RequireAdmin>
+              <AdminBookings />
+            </RequireAdmin>
+          }
+        />
       </Routes>
     </NextUIProvider>
   );

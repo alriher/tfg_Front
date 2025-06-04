@@ -257,7 +257,7 @@ function BookingsDetails() {
         <ModalContent>
           {() => (
             <>
-              <ModalHeader className="flex flex-col gap-1">Editar reserva</ModalHeader>
+              <ModalHeader>Editar reserva</ModalHeader>
               <ModalBody>
                 <form onSubmit={handleEditSubmit(onEditSubmit)}>
                   <Controller
@@ -290,8 +290,6 @@ function BookingsDetails() {
                         label="Fecha de la reserva"
                         onBlur={() => {
                           triggerEdit("entryDate");
-                          setEditValue("schedule", "");
-                          setEditValue("assistants", "");
                         }}
                       />
                     )}
@@ -326,7 +324,7 @@ function BookingsDetails() {
                         placeholder={(bookingToEdit?.Space ?? bookingToEdit?.spaceId)?.isSlotBased ? "Selecciona el número de asistentes" : "Selecciona el número de espacios"}
                         label={(bookingToEdit?.Space ?? bookingToEdit?.spaceId)?.isSlotBased ? "Asistentes" : "Espacios"}
                         isRequired={true}
-                        className="w-full"
+                        className="w-full mt-2"
                         selectedKeys={field.value ? [String(field.value)] : []}
                         onChange={e => field.onChange(e.target.value)}
                         isDisabled={editMaxAssistants === 0 || !editSelectedSchedule || !editControl._formValues.schedule}

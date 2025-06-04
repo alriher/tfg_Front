@@ -14,11 +14,13 @@ import { IMenuItem } from "../interfaces/menuItem";
 import { useAuth } from "../providers/AuthProvider";
 import ProfileAvatar from "./ProfileAvatar";
 import { useNavigate } from "react-router-dom";
+import AdminSidebar from "./AdminSidebar";
 
 export default function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
   const { user, logout } = useAuth();
+  console.log('USER EN NAVBAR:', user);
   const isActiveRoute = (route: string) => {
     return window.location.pathname === route;
   };
@@ -101,13 +103,15 @@ export default function App() {
             </Link>
           </NavbarItem>
         ))}
+        {/* Admin dropdown solo para administradores */}
+        {user?.isAdmin && <AdminSidebar />}
       </NavbarContent>
       <NavbarContent justify="end">
         {user ? (
           <ProfileAvatar user={user} logout={logout} />
         ) : (
           <>
-            <NavbarItem className="hidden lg:flex">
+            <NavbarItem className="hidden sm:flex">
               <Link
                 className="underline underline-offset-2 cursor-pointer"
                 onPress={handleLoginNavigate}
@@ -129,24 +133,31 @@ export default function App() {
         )}
       </NavbarContent>
       <NavbarMenu>
-        {mobileMenu.map((item, index) => (
-          <NavbarMenuItem key={`${item.item}-${index}`}>
-            <Link
-              color={
-                index === 2
-                  ? "primary"
-                  : index === menuItems.length - 1
-                  ? "danger"
-                  : "foreground"
-              }
-              className="w-full"
-              href={item.route}
-              size="lg"
-            >
-              {item.item}
-            </Link>
+        {mobileMenu
+          .filter(item => {
+            // Oculta "Iniciar sesión" y "Regístrate" si el usuario está logueado
+            if (user && (item.item === "Iniciar sesión" || item.item === "Regístrate")) return false;
+            return true;
+          })
+          .map((item, index) => (
+            <NavbarMenuItem key={`${item.item}-${index}`}>
+              <Link
+                color={isActiveRoute(item.route) ? "primary" : "foreground"}
+                className="w-full"
+                href={item.route}
+                size="lg"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                {item.item}
+              </Link>
+            </NavbarMenuItem>
+          ))}
+        {/* Admin dropdown solo para administradores en menú móvil */}
+        {user?.isAdmin && (
+          <NavbarMenuItem>
+            <AdminSidebar onItemClick={() => setIsMenuOpen(false)} />
           </NavbarMenuItem>
-        ))}
+        )}
       </NavbarMenu>
     </Navbar>
   );
