@@ -2,8 +2,11 @@ export interface IUser {
   id: string;
   username: string;
   email: string;
-  password: string;
-  isAdmin: boolean;
+  name?: string;
+  lastName?: string;
+  password?: string;
+  isAdmin?: boolean;
+  isSpaceAdmin?: boolean;
   createdAt: string;
   updatedAt: string;
 }
