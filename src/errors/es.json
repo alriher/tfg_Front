@@ -2,7 +2,7 @@
   "REQUIRED": "El campo {{field}} es obligatorio",
   "LOGIN_400": "Email o contraseña incorrectos",
   "IS_AFTER_NOW": "La fecha debe ser igual o posterior a la fecha actual",
-  "IS_BEFORE": "La fecha debe ser anterior a {{date}}",
+  "IS_BEFORE": "El usuario debe ser mayor de edad",
   "MIN": "El campo {{field}} debe tener al menos {{min}} caracteres",
   "MAX": "El campo {{field}} debe tener como máximo {{max}} caracteres",
   "IS_EMAIL": "El campo {{field}} debe ser un email válido",
@@ -19,5 +19,7 @@
   "USER_ALREADY_EXISTS": "El usuario ya existe",
   "EMAIL_ALREADY_EXISTS": "El correo ya existe",
   "USER_NOT_FOUND": "El usuario no existe",
-  "INVALID_PASSWORD": "La contraseña es incorrecta"
+  "INVALID_PASSWORD": "La contraseña es incorrecta",
+  "PHONE_9_DIGITS": "El campo {{field}} debe tener exactamente 9 dígitos",
+  "NOT_TOO_OLD": "El usuario no puede tener más de 100 años"
 }

@@ -12,7 +12,9 @@
   "dependencies": {
     "@internationalized/date": "^3.5.4",
     "@nextui-org/react": "^2.4.2",
+    "@react-google-maps/api": "^2.20.6",
     "@types/react-router-dom": "^5.3.3",
+    "@vis.gl/react-google-maps": "^1.5.3",
     "axios": "^1.7.2",
     "framer-motion": "^11.2.12",
     "moment": "^2.30.1",

@@ -57,6 +57,18 @@ export function isPhoneValidation(phone: string) {
   return phoneRegex.test(phone);
 }
 
+export function isPhone9DigitsValidation(phone: string) {
+  if (!phone) return true;
+  return /^\d{9}$/.test(phone);
+}
+
+export function isNotTooOldValidation(selectedDate: CalendarDate) {
+  const todayDate = today("Europe/Madrid");
+  const minYear = todayDate.year - 100;
+  // Si el año de nacimiento es menor que el mínimo permitido, es inválido
+  return selectedDate.year >= minYear;
+}
+
 
 
 

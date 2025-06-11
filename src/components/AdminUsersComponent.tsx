@@ -78,9 +78,18 @@ export default function AdminUsersComponent() {
     if (!userToDelete) return;
     try {
       await deleteUser(userToDelete.id);
-      setUsers(users => users.filter(u => u.id !== userToDelete.id));
       setUserToDelete(null);
       onClose();
+      // Refrescar la tabla tras eliminar
+      getAllUsers(page, pageSize, filterValue).then((res) => {
+        if (Array.isArray(res.users)) {
+          setUsers(res.users);
+          setTotal(res.total || res.users.length);
+        } else if (Array.isArray(res)) {
+          setUsers(res);
+          setTotal(res.length);
+        }
+      });
     } catch (err) {
       alert("Error al eliminar el usuario");
     }
@@ -88,7 +97,7 @@ export default function AdminUsersComponent() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex justify-between gap-3 items-end">
+      <div className="flex justify-start gap-3 items-end pl-2 sm:pl-4">
         <Input
           isClearable
           className="w-full sm:max-w-[44%]"

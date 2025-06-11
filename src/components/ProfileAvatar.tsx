@@ -15,7 +15,6 @@ export default function ProfileAvatar({
   user: IUser;
   logout: () => void;
 }) {
-
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -25,7 +24,7 @@ export default function ProfileAvatar({
     } catch (error) {
       console.error("Error al cerrar sesion:", error);
     }
-  }
+  };
   return (
     <div className="flex items-center gap-4">
       <Dropdown>
@@ -44,7 +43,9 @@ export default function ProfileAvatar({
             <p className="font-semibold">Sesión iniciada como:</p>
             <p className="font-semibold">{user.email}</p>
           </DropdownItem>
-          <DropdownItem key="profile">Mi perfil</DropdownItem>
+          <DropdownItem key="profile" onPress={() => navigate("/profile")}>
+            Mi perfil
+          </DropdownItem>
           <DropdownItem
             className="text-danger"
             onPress={handleLogout}

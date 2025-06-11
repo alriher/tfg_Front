@@ -14,5 +14,6 @@ export enum ErrorTypes {
   emailAlreadyExists = "EMAIL_ALREADY_EXISTS",
   userNotFound = "USER_NOT_FOUND",
   invalidPassword = "INVALID_PASSWORD",
-  
+  isPhone9DigitsValidation = "PHONE_9_DIGITS",
+  isNotTooOld = "NOT_TOO_OLD",
 }

@@ -12,6 +12,7 @@ export interface IAuthContext {
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   user: IUser | null;
+  setUser?: (user: IUser) => void;
   register: (
     email: string,
     password: string,
@@ -81,7 +82,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, register }}>
+    <AuthContext.Provider value={{ user, login, logout, register, setUser }}>
       {children}
     </AuthContext.Provider>
   );

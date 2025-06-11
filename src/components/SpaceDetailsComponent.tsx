@@ -27,6 +27,7 @@ import {
 import { schedule } from "../assets/schedules";
 import useDateFormatter from "../services/DateFormatterService";
 import moment from "moment";
+import SpaceMap from "./SpaceMap";
 interface ISpaceFormInput {
   entryDate: CalendarDate;
   schedule: string;
@@ -105,16 +106,22 @@ export default function SpaceDetailsComponent() {
 
   const loadBookingsForDate = async (date: CalendarDate) => {
     if (space && date) {
-      const dateStr = `${date.year}-${String(date.month).padStart(2, "0")}-${String(date.day).padStart(2, "0")}`;
+      const dateStr = `${date.year}-${String(date.month).padStart(
+        2,
+        "0"
+      )}-${String(date.day).padStart(2, "0")}`;
       const reservas = await getBookingsBySpaceIdAndDate(space.id, dateStr);
       const assistantsPerHour: { [key: string]: number } = {};
       reservas.forEach((r: IBooking) => {
         const start = moment(r.dateStart).format("HH:mm");
         const end = moment(r.dateEnd).format("HH:mm");
         const scheduleValue = `${start}-${end}`;
-        const scheduleKey = schedule.find(s => s.value === scheduleValue)?.key;
+        const scheduleKey = schedule.find(
+          (s) => s.value === scheduleValue
+        )?.key;
         if (scheduleKey) {
-          assistantsPerHour[scheduleKey] = (assistantsPerHour[scheduleKey] || 0) + (r.assistants || 1);
+          assistantsPerHour[scheduleKey] =
+            (assistantsPerHour[scheduleKey] || 0) + (r.assistants || 1);
         }
       });
       assistantsPerHourRef.current = assistantsPerHour;
@@ -143,7 +150,10 @@ export default function SpaceDetailsComponent() {
         return;
       }
       const [startTime, endTime] = selectedSchedule.value.split("-");
-      const dateStr = `${entryDate.year}-${String(entryDate.month).padStart(2, "0")}-${String(entryDate.day).padStart(2, "0")}`;
+      const dateStr = `${entryDate.year}-${String(entryDate.month).padStart(
+        2,
+        "0"
+      )}-${String(entryDate.day).padStart(2, "0")}`;
       const dateStart = `${dateStr} ${startTime}:00`;
       const dateEnd = `${dateStr} ${endTime}:00`;
 
@@ -197,18 +207,13 @@ export default function SpaceDetailsComponent() {
         <div className="flex flex-col justify-between gap-6">
           <div>
             <h1 className="font-bold text-2xl mb-6">{space.name}</h1>
-            <p className="text-pretty">
-              Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aperiam,
-              eveniet. Doloremque adipisci obcaecati est libero, labore nam fuga
-              provident fugit, et ea suscipit iure quod distinctio dolorem quos
-              voluptate mollitia. Lorem ipsum dolor sit amet, consectetur
-              adipisicing elit. Ea beatae sint accusamus distinctio doloribus
-              voluptatem velit assumenda esse reprehenderit ut consequatur
-              debitis dolor obcaecati, at qui quas, eveniet atque quis. Lorem
-              ipsum dolor, sit amet consectetur adipisicing elit. Ducimus quidem
-              accusantium praesentium dolores, placeat natus quia, qui incidunt
-              iusto sed, magni aliquid. Animi molestias sit tempore cumque
-            </p>
+            <p className="text-pretty">{space.description}</p>
+            <h2 className="font-bold text-md mb-2 my-4">
+              Información del espacio
+            </h2>
+            <p className="text-pretty">Dirección: {space.address}</p>
+            <p className="text-pretty">Localidad: {space.localidad}</p>
+            <p className="text-pretty">Provincia: {space.provincia}</p>
           </div>
           <div>
             <h2 className="font-bold text-sm">Reservar</h2>
@@ -278,7 +283,11 @@ export default function SpaceDetailsComponent() {
 
                     return (
                       <Select
-                        key={entryDate ? `${entryDate.year}-${entryDate.month}-${entryDate.day}` : "select"}
+                        key={
+                          entryDate
+                            ? `${entryDate.year}-${entryDate.month}-${entryDate.day}`
+                            : "select"
+                        }
                         {...field}
                         placeholder="Selecciona la hora de la reserva"
                         label="Hora de la reserva"
@@ -310,7 +319,11 @@ export default function SpaceDetailsComponent() {
                     <>
                       <Select
                         {...field}
-                        placeholder={space?.isSlotBased ? "Selecciona el número de asistentes" : "Selecciona el número de espacios"}
+                        placeholder={
+                          space?.isSlotBased
+                            ? "Selecciona el número de asistentes"
+                            : "Selecciona el número de espacios"
+                        }
                         label={space?.isSlotBased ? "Asistentes" : "Espacios"}
                         isRequired={true}
                         isInvalid={!!errors.assistants}
@@ -320,12 +333,16 @@ export default function SpaceDetailsComponent() {
                         className="col-span-2"
                         isDisabled={maxAssistants === 0 || !selectedSchedule}
                         description={
-                          selectedSchedule ?
-                            `${space?.isSlotBased ? "Plazas" : "Espacios"} libres para esta hora: ${maxAssistants}` :
-                            ""
+                          selectedSchedule
+                            ? `${
+                                space?.isSlotBased ? "Plazas" : "Espacios"
+                              } libres para esta hora: ${maxAssistants}`
+                            : ""
                         }
                       >
-                        {Array.from({ length: maxAssistants }, (_, i) => String(i + 1)).map((c) => (
+                        {Array.from({ length: maxAssistants }, (_, i) =>
+                          String(i + 1)
+                        ).map((c) => (
                           <SelectItem key={c}>{c}</SelectItem>
                         ))}
                       </Select>
@@ -343,8 +360,14 @@ export default function SpaceDetailsComponent() {
             )}
           </div>
         </div>
+        <div>
+          {space.lat && space.lon && (
+            <div className="mt-4">
+              <SpaceMap lat={space.lat} lng={space.lon} />
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
 }
-
