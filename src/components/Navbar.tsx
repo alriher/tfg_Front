@@ -104,11 +104,12 @@ export default function App() {
             </Link>
           </NavbarItem>
         ))}
-        {/* Admin dropdown solo para administradores */}
-        {user?.isAdmin && <AdminSidebar />}
-        {/* Space admin dropdown solo para space admins */}
-        {user?.isSpaceAdmin && <SpaceAdminSidebar />}
+        <div className="flex">
+          {user?.isSpaceAdmin && <SpaceAdminSidebar />}
+          {user?.isAdmin && <AdminSidebar />}
+        </div>
       </NavbarContent>
+      
       <NavbarContent justify="end">
         {user ? (
           <ProfileAvatar user={user} logout={logout} />
@@ -155,18 +156,17 @@ export default function App() {
               </Link>
             </NavbarMenuItem>
           ))}
-        {/* Admin dropdown solo para administradores en menú móvil */}
+          {user?.isSpaceAdmin && (
+          <NavbarMenuItem>
+            <SpaceAdminSidebar onItemClick={() => setIsMenuOpen(false)} />
+          </NavbarMenuItem>
+        )}
         {user?.isAdmin && (
           <NavbarMenuItem>
             <AdminSidebar onItemClick={() => setIsMenuOpen(false)} />
           </NavbarMenuItem>
         )}
-        {/* Space admin dropdown solo para space admins en menú móvil */}
-        {user?.isSpaceAdmin && (
-          <NavbarMenuItem>
-            <SpaceAdminSidebar onItemClick={() => setIsMenuOpen(false)} />
-          </NavbarMenuItem>
-        )}
+        
       </NavbarMenu>
     </Navbar>
   );
