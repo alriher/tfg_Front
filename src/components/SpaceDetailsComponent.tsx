@@ -193,27 +193,35 @@ export default function SpaceDetailsComponent() {
   return (
     <div className="flex items-center justify-center container m-auto">
       <div className="grid grid-cols-2 gap-6 px-4 py-12">
-        <Image
-          isZoomed
-          shadow="md"
-          classNames={{
-            wrapper: "bg-center bg-no-repeat bg-cover max-h-[500px] h-fit",
-          }}
-          width="100%"
-          className="max-h-[500px]"
-          fallbackSrc="https://via.placeholder.com/300x200"
-          src={space.img}
-        ></Image>
-        <div className="flex flex-col justify-between gap-6">
+        <div>
+          <Image
+            isZoomed
+            shadow="md"
+            classNames={{
+              wrapper: "bg-center bg-no-repeat bg-cover max-h-[500px] h-fit",
+            }}
+            width="100%"
+            className="max-h-[500px]"
+            fallbackSrc="https://via.placeholder.com/300x200"
+            src={space.img}
+          ></Image>
+          <div className="mt-4">
+            {space.lat && space.lon && (
+              <div className="rounded-large overflow-hidden">
+                <SpaceMap lat={space.lat} lng={space.lon} />
+              </div>
+            )}
+            <div>
+              <p className="text-pretty text-md text-gray-500">
+                {space.address}, {space.localidad}, {space.provincia}
+              </p>
+            </div>
+          </div>
+        </div>
+        <div className="flex flex-col gap-6">
           <div>
             <h1 className="font-bold text-2xl mb-6">{space.name}</h1>
             <p className="text-pretty">{space.description}</p>
-            <h2 className="font-bold text-md mb-2 my-4">
-              Información del espacio
-            </h2>
-            <p className="text-pretty">Dirección: {space.address}</p>
-            <p className="text-pretty">Localidad: {space.localidad}</p>
-            <p className="text-pretty">Provincia: {space.provincia}</p>
           </div>
           <div>
             <h2 className="font-bold text-sm">Reservar</h2>
@@ -359,13 +367,6 @@ export default function SpaceDetailsComponent() {
               </Button>
             )}
           </div>
-        </div>
-        <div>
-          {space.lat && space.lon && (
-            <div className="mt-4">
-              <SpaceMap lat={space.lat} lng={space.lon} />
-            </div>
-          )}
         </div>
       </div>
     </div>
