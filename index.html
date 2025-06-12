@@ -5,6 +5,12 @@
     <link rel="icon" href="/logo.webp" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Vite + React + TS</title>
+    <!-- Google Maps API: la clave se inyecta en tiempo de build por Vite -->
+    <script
+      src="https://maps.googleapis.com/maps/api/js?key=%VITE_GOOGLE_MAPS_API_KEY%&libraries=places"
+      async
+      defer
+    ></script>
   </head>
   <body>
     <div id="root"></div>

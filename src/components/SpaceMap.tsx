@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect } from 'react';
 
 interface SpaceMapProps {
   lat: number;
@@ -11,120 +11,147 @@ const containerStyle = {
   height: '300px',
 };
 
-export default function SpaceMap({lat, lng, onLocationChange}: SpaceMapProps) {
+export default function SpaceMap({ lat, lng, onLocationChange }: SpaceMapProps) {
   const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
   const inputRef = useRef<HTMLInputElement>(null);
   const mapDivRef = useRef<HTMLDivElement>(null);
-  const [autocomplete, setAutocomplete] = useState<any>(null);
-  const [map, setMap] = useState<any>(null);
+  const mapInstance = useRef<any>(null);
+  const markerInstance = useRef<any>(null);
+  const autocompleteInstance = useRef<any>(null);
 
-  // Inicializa el mapa y el autocompletado manualmente
+  // Inicializar mapa y Autocomplete solo una vez
   useEffect(() => {
-    if (!window.google || !window.google.maps || !window.google.maps.places) return;
-    if (!mapDivRef.current || !inputRef.current) return;
-    // Solo inicializar una vez
-    if (map && autocomplete) return;
-
-    // Inicializar mapa si no existe
-    let mapInstance = map;
-    if (!mapInstance) {
-      mapInstance = new window.google.maps.Map(mapDivRef.current, {
+    if (!window.google || !window.google.maps || !window.google.maps.places) {
+      // Esperar a que la API esté disponible
+      const interval = setInterval(() => {
+        if (window.google && window.google.maps && window.google.maps.places && mapDivRef.current) {
+          clearInterval(interval);
+          if (!mapInstance.current) {
+            mapInstance.current = new window.google.maps.Map(mapDivRef.current, {
+              center: { lat, lng },
+              zoom: 15,
+              gestureHandling: 'auto',
+              disableDefaultUI: false,
+            });
+          }
+          if (onLocationChange && !autocompleteInstance.current && inputRef.current) {
+            autocompleteInstance.current = new window.google.maps.places.Autocomplete(inputRef.current);
+            autocompleteInstance.current.addListener('place_changed', () => {
+              const place = autocompleteInstance.current.getPlace();
+              if (place && place.geometry && place.geometry.location && onLocationChange) {
+                const newLat = place.geometry.location.lat();
+                const newLng = place.geometry.location.lng();
+                onLocationChange(newLat, newLng);
+                mapInstance.current.panTo({ lat: newLat, lng: newLng });
+              }
+            });
+          }
+        }
+      }, 200);
+      return () => clearInterval(interval);
+    }
+    if (!mapDivRef.current) return;
+    if (!mapInstance.current) {
+      mapInstance.current = new window.google.maps.Map(mapDivRef.current, {
         center: { lat, lng },
         zoom: 15,
         gestureHandling: 'auto',
         disableDefaultUI: false,
       });
-      setMap(mapInstance);
     }
-
-    // Inicializar Autocomplete
-    let autocompleteInstance = autocomplete;
-    if (!autocompleteInstance) {
-      autocompleteInstance = new window.google.maps.places.Autocomplete(inputRef.current);
-      autocompleteInstance.addListener('place_changed', () => {
-        const place = autocompleteInstance.getPlace();
+    if (onLocationChange && !autocompleteInstance.current && inputRef.current) {
+      autocompleteInstance.current = new window.google.maps.places.Autocomplete(inputRef.current);
+      autocompleteInstance.current.addListener('place_changed', () => {
+        const place = autocompleteInstance.current.getPlace();
         if (place && place.geometry && place.geometry.location && onLocationChange) {
-          const lat = place.geometry.location.lat();
-          const lng = place.geometry.location.lng();
-          onLocationChange(lat, lng);
-          mapInstance.panTo({ lat, lng });
+          const newLat = place.geometry.location.lat();
+          const newLng = place.geometry.location.lng();
+          onLocationChange(newLat, newLng);
+          mapInstance.current.panTo({ lat: newLat, lng: newLng });
         }
       });
-      setAutocomplete(autocompleteInstance);
     }
-  }, [lat, lng, onLocationChange, map, autocomplete]);
+  }, [apiKey, onLocationChange]);
 
-  // Actualiza el centro del mapa si cambian lat/lng externamente
+  // Log para saber si la API de Google Maps está cargada
   useEffect(() => {
-    if (map) {
-      map.setCenter({ lat, lng });
+    if (window.google && window.google.maps && window.google.maps.places) {
+      console.log("Google Maps API cargada");
+    } else {
+      console.log("Google Maps API NO cargada");
     }
-  }, [lat, lng, map]);
+  }, []);
 
-  // Añadir marcador y click en el mapa para seleccionar ubicación
+  // Mantener el centro del mapa sincronizado con lat/lng
   useEffect(() => {
-    if (!map) return;
-    let marker = new window.google.maps.Marker({
+    if (mapInstance.current) {
+      mapInstance.current.setCenter({ lat, lng });
+    }
+  }, [lat, lng]);
+
+  // Manejar el marcador y los listeners de interacción
+  useEffect(() => {
+    if (!mapInstance.current) return;
+    // Eliminar marcador anterior si existe
+    if (markerInstance.current) {
+      markerInstance.current.setMap(null);
+    }
+    markerInstance.current = new window.google.maps.Marker({
       position: { lat, lng },
-      map,
+      map: mapInstance.current,
       draggable: !!onLocationChange,
     });
-
-    // Actualizar posición del marcador si cambian lat/lng
-    marker.setPosition({ lat, lng });
-
-    // Permitir arrastrar el marcador
+    // Listener para arrastrar el marcador
     if (onLocationChange) {
-      marker.addListener('dragend', (e: any) => {
+      markerInstance.current.addListener('dragend', (e: any) => {
         const newLat = e.latLng.lat();
         const newLng = e.latLng.lng();
         onLocationChange(newLat, newLng);
       });
-    }
-
-    // Permitir seleccionar ubicación haciendo click en el mapa
-    if (onLocationChange) {
-      const clickListener = map.addListener('click', (e: any) => {
+      // Listener para click en el mapa
+      const clickListener = mapInstance.current.addListener('click', (e: any) => {
         const newLat = e.latLng.lat();
         const newLng = e.latLng.lng();
         onLocationChange(newLat, newLng);
       });
-      // Limpiar listener al desmontar o cambiar
+      // Limpiar listeners al desmontar
       return () => {
         window.google.maps.event.removeListener(clickListener);
-        marker.setMap(null);
+        if (markerInstance.current) markerInstance.current.setMap(null);
       };
     } else {
       // Limpiar marcador si no hay onLocationChange
       return () => {
-        marker.setMap(null);
+        if (markerInstance.current) markerInstance.current.setMap(null);
       };
     }
-  }, [map, lat, lng, onLocationChange]);
+  }, [lat, lng, onLocationChange]);
 
   if (!apiKey) {
     return <div>No se ha configurado la API Key de Google Maps</div>;
   }
 
   return (
-    <div style={{...containerStyle, position: 'relative'}}>
-      {/* Barra de búsqueda sobre el mapa */}
-      <input
-        ref={inputRef}
-        type="text"
-        placeholder="Buscar dirección o lugar"
-        style={{
-          position: 'absolute',
-          top: 10,
-          left: 10,
-          zIndex: 2,
-          width: '80%',
-          padding: '8px',
-          borderRadius: '8px',
-          border: '1px solid #ccc',
-          fontSize: '16px'
-        }}
-      />
+    <div style={{ ...containerStyle, position: 'relative' }}>
+      {/* Barra de búsqueda sobre el mapa, solo si se permite */}
+      {onLocationChange && (
+        <input
+          ref={inputRef}
+          type="text"
+          placeholder="Buscar dirección o lugar"
+          style={{
+            position: 'absolute',
+            top: 10,
+            left: 10,
+            zIndex: 2,
+            width: '80%',
+            padding: '8px',
+            borderRadius: '8px',
+            border: '1px solid #ccc',
+            fontSize: '16px',
+          }}
+        />
+      )}
       {/* Mapa manual */}
       <div
         ref={mapDivRef}
