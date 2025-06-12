@@ -13,6 +13,9 @@ import AdminUsers from "./views/AdminUsers";
 import AdminSpaces from "./views/AdminSpaces";
 import AdminBookings from "./views/AdminBookings";
 import { RequireAdmin } from "./services/AdminServices";
+import { RequireSpaceAdmin } from "./services/SpaceAdminServices";
+import CreateSpace from "./views/CreateSpace";
+import MySpaces from "./views/MySpaces";
 
 function App() {
   const navigate = useNavigate();
@@ -50,6 +53,22 @@ function App() {
             <RequireAdmin>
               <AdminBookings />
             </RequireAdmin>
+          }
+        />
+        <Route
+          path="/space-admin/create-space"
+          element={
+            <RequireSpaceAdmin>
+              <CreateSpace />
+            </RequireSpaceAdmin>
+          }
+        />
+        <Route
+          path="/space-admin/my-spaces"
+          element={
+            <RequireSpaceAdmin>
+              <MySpaces />
+            </RequireSpaceAdmin>
           }
         />
       </Routes>
