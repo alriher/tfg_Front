@@ -11,7 +11,7 @@ export interface ISpace {
   lat: number;
   lon: number;
   img: string;
-  bookings: IBooking[];
+  bookings?: IBooking[];
   createdAt: string;
   updatedAt: string;
   isSlotBased: boolean;

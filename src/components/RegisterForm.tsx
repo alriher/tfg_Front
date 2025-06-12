@@ -102,9 +102,9 @@ const RegisterForm = () => {
   const toggleVisibility2 = () => setIsVisible2(!isVisible2);
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100">
-      <div className="bg-white p-8 rounded-lg shadow-md max-w-sm w-full">
-        <h2 className="text-2xl font-bold mb-6 text-center">Register</h2>
+    <div className="flex justify-center items-center px-4 min-h-screen bg-gray-100">
+      <div className="bg-white p-8 rounded-lg shadow-md max-w-md w-full">
+        <h2 className="text-2xl font-bold mb-6 text-center">Registro</h2>
         <form
           onSubmit={handleSubmit(onSubmit, (errors) => console.log(errors))}
           className="flex gap-4 flex-col mb-4"
@@ -126,7 +126,8 @@ const RegisterForm = () => {
                   {...field}
                   type="email"
                   label="Email"
-                  placeholder="Enter your email"
+                  isRequired
+                  placeholder="Introduce tu email"
                   isInvalid={!!errors.email}
                   errorMessage={getErrorMessage(errors.email?.type, {
                     field: "email",
@@ -141,7 +142,7 @@ const RegisterForm = () => {
                             <span className="text-danger">{getErrorMessage(formError)}</span>
                         ) : null}
                     </div> */}
-          <div>
+          <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
             <Controller
               control={control}
               name="password"
@@ -162,8 +163,8 @@ const RegisterForm = () => {
                 <Input
                   {...field}
                   label="Contraseña"
-                  variant="bordered"
-                  placeholder="Enter your password"
+                  isRequired
+                  placeholder="Introduce tu contraseña"
                   errorMessage={getErrorMessage(errors.password?.type, {
                     field: "contraseña",
                     min: 8,
@@ -182,7 +183,6 @@ const RegisterForm = () => {
                     </button>
                   }
                   type={isVisible ? "text" : "password"}
-                  className="max-w-xs"
                   isInvalid={!!errors.password}
                 />
               )}
@@ -209,7 +209,8 @@ const RegisterForm = () => {
                   {...field}
                   type={isVisible2 ? "text" : "password"}
                   label="Confirmar contraseña"
-                  placeholder="Enter your password again"
+                  isRequired
+                  placeholder="Repite tu contraseña"
                   isInvalid={!!errors.confirmPassword}
                   errorMessage={getErrorMessage(errors.confirmPassword?.type, {
                     field: "confirmar contraseña",
@@ -246,7 +247,8 @@ const RegisterForm = () => {
                   {...field}
                   type="text"
                   label="Username"
-                  placeholder="Enter your username"
+                  isRequired
+                  placeholder="Introduce tu username"
                   isInvalid={!!errors.username}
                   errorMessage={getErrorMessage(errors.username?.type, {
                     field: "username",
@@ -263,7 +265,7 @@ const RegisterForm = () => {
                   {...field}
                   type="text"
                   label="Nombre"
-                  placeholder="Enter your name"
+                  placeholder="Introduce tu nombre"
                 />
               )}
             />
@@ -277,8 +279,9 @@ const RegisterForm = () => {
                 <Input
                   {...field}
                   type="text"
-                  label="Last Name"
-                  placeholder="Enter your last name"
+                  label="Apellidos"
+                  placeholder="Introduce tus apellidos"
+                  className="mt-2"
                 />
               )}
             />
@@ -303,7 +306,8 @@ const RegisterForm = () => {
                   maxValue={today("Europe/Madrid")}
                   minValue={today("Europe/Madrid").add({ years: -100 })}
                   hideTimeZone
-                  className="w-full"
+                  isRequired
+                  className="mt-2"
                   errorMessage={getErrorMessage(errors.birthdate?.type, {
                     field: "fecha de nacimiento",
                   })}
@@ -321,8 +325,9 @@ const RegisterForm = () => {
                 <Input
                   {...field}
                   type="text"
-                  label="Address"
-                  placeholder="Enter your address"
+                  label="Dirección"
+                  className="mt-1 md:mt-2"
+                  placeholder="Introduce tu dirección"
                 />
               )}
             />
@@ -340,9 +345,10 @@ const RegisterForm = () => {
                 <Input
                   {...field}
                   type="text"
-                  label="Phone"
-                  placeholder="Enter your phone"
+                  label="Teléfono"
+                  placeholder="Introduce tu teléfono"
                   isInvalid={!!errors.phone}
+                  className="mt-2"
                   errorMessage={getErrorMessage(errors.phone?.type, {
                     field: "teléfono",
                   })}
@@ -351,7 +357,7 @@ const RegisterForm = () => {
             />
           </div>
           <Button color="primary" className="font-semibold" type="submit">
-            Register
+            Registrarse
           </Button>
           {/* <div className={formError.length == 0 ? "hidden" : ""}>
                         <span className="text-danger">{getErrorMessage(formError)}</span>

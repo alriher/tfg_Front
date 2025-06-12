@@ -191,8 +191,9 @@ export default function SpaceDetailsComponent() {
   }
 
   return (
-    <div className="flex items-center justify-center container m-auto">
-      <div className="grid grid-cols-2 gap-6 px-4 py-12">
+    <div className="flex container m-auto">
+      <div className="grid px-6 grid-cols-1 md:grid-cols-2 w-full gap-6 py-12">
+        {/* Imagen y mapa a la izquierda */}
         <div>
           <Image
             isZoomed
@@ -205,7 +206,7 @@ export default function SpaceDetailsComponent() {
             fallbackSrc="https://via.placeholder.com/300x200"
             src={space.img}
           ></Image>
-          <div className="mt-4">
+          <div className="md:block hidden mt-4">
             {space.lat && space.lon && (
               <div className="rounded-large overflow-hidden">
                 <SpaceMap lat={space.lat} lng={space.lon} />
@@ -218,6 +219,7 @@ export default function SpaceDetailsComponent() {
             </div>
           </div>
         </div>
+        {/* Formulario y detalles a la derecha */}
         <div className="flex flex-col gap-6">
           <div>
             <h1 className="font-bold text-2xl mb-6">{space.name}</h1>
@@ -229,7 +231,7 @@ export default function SpaceDetailsComponent() {
             {user ? (
               <form
                 onSubmit={handleSubmit(onSubmit)}
-                className="grid gird-cols-2 gap-2"
+                className="grid grid-cols-1 md:grid-cols-2 gap-2"
               >
                 <Controller
                   control={control}
@@ -261,7 +263,6 @@ export default function SpaceDetailsComponent() {
                       minValue={today("Europe/Madrid")}
                       hideTimeZone
                       isRequired={true}
-                      className="w-full"
                       label="Fecha y hora de entrada"
                       onBlur={() => {
                         trigger("entryDate"); // <-- fuerza validación al salir del campo
@@ -300,7 +301,6 @@ export default function SpaceDetailsComponent() {
                         placeholder="Selecciona la hora de la reserva"
                         label="Hora de la reserva"
                         isRequired={true}
-                        className="w-full"
                         disabledKeys={fullSchedules}
                         isDisabled={disableSchedule}
                         onBlur={() => setValue("assistants", "")}
@@ -338,7 +338,7 @@ export default function SpaceDetailsComponent() {
                         errorMessage={getErrorMessage(errors.assistants?.type, {
                           field: space?.isSlotBased ? "asistentes" : "espacios",
                         })}
-                        className="col-span-2"
+                        className="mt-2 md:col-span-2"
                         isDisabled={maxAssistants === 0 || !selectedSchedule}
                         description={
                           selectedSchedule
@@ -357,15 +357,43 @@ export default function SpaceDetailsComponent() {
                     </>
                   )}
                 />
-                <Button type="submit" className="col-span-2" color="primary">
+                <Button type="submit" className="md:col-span-2" color="primary">
                   Reservar
                 </Button>
+                <div className="md:hidden mt-4">
+                  {space.lat && space.lon && (
+                    <div className="rounded-large overflow-hidden">
+                      <SpaceMap lat={space.lat} lng={space.lon} />
+                    </div>
+                  )}
+                  <div>
+                    <p className="text-pretty text-md text-gray-500">
+                      {space.address}, {space.localidad}, {space.provincia}
+                    </p>
+                  </div>
+                </div>
               </form>
             ) : (
-              <Button color="primary" as={Link} onPress={handleLoginNavigate}>
-                Inicia sesión para reservar
-              </Button>
-            )}
+              <>
+                <Button color="primary" as={Link} onPress={handleLoginNavigate}>
+                  Inicia sesión para reservar
+                </Button>
+                <div className="md:hidden mt-4">
+                  {space.lat && space.lon && (
+                    <div className="rounded-large overflow-hidden">
+                      <SpaceMap lat={space.lat} lng={space.lon} />
+                    </div>
+                  )}
+                  <div>
+                    <p className="text-pretty text-md text-gray-500">
+                      {space.address}, {space.localidad}, {space.provincia}
+                    </p>
+                  </div>
+                </div>
+              </>
+            )
+            
+            }
           </div>
         </div>
       </div>

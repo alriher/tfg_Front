@@ -198,16 +198,25 @@ function BookingsDetails() {
   return (
     <>
       <div className="px-6 container m-auto grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-4">
-        {bookings.map((booking) => (
-          <SpaceCard
-            key={booking.id}
-            space={booking.Space ?? booking.spaceId}
-            booking={{ dateStart: booking.dateStart, dateEnd: booking.dateEnd, assistants: booking.assistants }}
-            showButtons={true}
-            onEdit={() => handleEdit(booking)}
-            onCancel={() => handleCancel(booking)}
-          />
-        ))}
+        {bookings.length === 0 ? (
+          <div className="col-span-full text-center text-default-500 py-12 flex flex-col items-center gap-4">
+            <div>No tienes reservas.</div>
+            <Button color="primary" onClick={() => window.location.href = '/communities'}>
+              Haz una reserva
+            </Button>
+          </div>
+        ) : (
+          bookings.map((booking) => (
+            <SpaceCard
+              key={booking.id}
+              space={booking.Space ?? booking.spaceId}
+              booking={{ dateStart: booking.dateStart, dateEnd: booking.dateEnd, assistants: booking.assistants }}
+              showButtons={true}
+              onEdit={() => handleEdit(booking)}
+              onCancel={() => handleCancel(booking)}
+            />
+          ))
+        )}
       </div>
       <Modal backdrop="blur" isOpen={isOpen} onClose={() => { setBookingToCancel(null); onClose(); }}>
         <ModalContent>

@@ -217,6 +217,7 @@ const ProfileForm = () => {
               maxValue={today("Europe/Madrid")}
               minValue={today("Europe/Madrid").add({ years: -100 })}
               hideTimeZone
+              labelPlacement="outside"
               className="md:col-span-2"
               label="Fecha de nacimiento"
               errorMessage={getErrorMessage(errors.birthdate?.type, {
