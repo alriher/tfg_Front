@@ -15,6 +15,7 @@ import { useAuth } from "../providers/AuthProvider";
 import ProfileAvatar from "./ProfileAvatar";
 import { useNavigate } from "react-router-dom";
 import AdminSidebar from "./AdminSidebar";
+import SpaceAdminSidebar from "./SpaceAdminSidebar";
 
 export default function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -105,6 +106,8 @@ export default function App() {
         ))}
         {/* Admin dropdown solo para administradores */}
         {user?.isAdmin && <AdminSidebar />}
+        {/* Space admin dropdown solo para space admins */}
+        {user?.isSpaceAdmin && <SpaceAdminSidebar />}
       </NavbarContent>
       <NavbarContent justify="end">
         {user ? (
@@ -156,6 +159,12 @@ export default function App() {
         {user?.isAdmin && (
           <NavbarMenuItem>
             <AdminSidebar onItemClick={() => setIsMenuOpen(false)} />
+          </NavbarMenuItem>
+        )}
+        {/* Space admin dropdown solo para space admins en menú móvil */}
+        {user?.isSpaceAdmin && (
+          <NavbarMenuItem>
+            <SpaceAdminSidebar onItemClick={() => setIsMenuOpen(false)} />
           </NavbarMenuItem>
         )}
       </NavbarMenu>
