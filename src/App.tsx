@@ -71,6 +71,14 @@ function App() {
             </RequireSpaceAdmin>
           }
         />
+        <Route
+          path="/space-admin/space-bookings"
+          element={
+            <RequireSpaceAdmin>
+              <MySpaces />
+            </RequireSpaceAdmin>
+          }
+        />
       </Routes>
     </NextUIProvider>
   );

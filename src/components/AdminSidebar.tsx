@@ -12,7 +12,6 @@ import { useNavigate } from "react-router-dom";
 
 const adminLinks = [
   { label: "Usuarios", route: "/admin/users" },
-  { label: "Reservas", route: "/admin/bookings" },
   { label: "Espacios", route: "/admin/spaces" },
   // Añade más enlaces según tus necesidades
 ];

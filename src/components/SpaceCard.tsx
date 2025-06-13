@@ -2,9 +2,16 @@ import { Card, CardBody, CardFooter, Image, Button } from "@nextui-org/react";
 import { ISpace } from "../interfaces/space";
 import { useNavigate } from "react-router-dom";
 
-export default function SpaceCard({ space, showButtons, onEdit, onCancel, booking }: { space: ISpace, showButtons?: boolean, onEdit?: () => void, onCancel?: () => void, booking?: { dateStart: string, dateEnd: string, assistants?: number } }) {
+export default function SpaceCard({ space, showButtons, onEdit, onCancel, onShowBookings, showBookingsButton, booking }: {
+  space: ISpace,
+  showButtons?: boolean,
+  onEdit?: () => void,
+  onCancel?: () => void,
+  onShowBookings?: () => void,
+  showBookingsButton?: boolean,
+  booking?: { dateStart: string, dateEnd: string, assistants?: number }
+}) {
   const navigate = useNavigate();
-  console.log("BUTTONS?", showButtons);
   return (
     <Card
       isPressable
@@ -24,17 +31,26 @@ export default function SpaceCard({ space, showButtons, onEdit, onCancel, bookin
           classNames={{
             wrapper: "bg-center bg-no-repeat bg-cover",
           }}
-          src={space.img} // Usa la imagen del espacio o un placeholder
+          src={space.img}
         />
         {showButtons && (
-          <div className="flex gap-2 mt-2">
-            <Button color="default" className="w-full" size="sm" onClick={onEdit}>
-              Editar
-            </Button>
-            <Button className="bg-[#db4664] text-white w-full" size="sm" onClick={onCancel}>
-              Cancelar
-            </Button>
-          </div>
+          <>
+            <div className="flex gap-2 mt-2">
+              <Button color="default" className="w-full" size="sm" onClick={onEdit}>
+                Editar
+              </Button>
+              <Button className="bg-[#db4664] text-white w-full" size="sm" onClick={onCancel}>
+                Eliminar
+              </Button>
+            </div>
+            <div className="flex gap-2 mt-2">
+              {showBookingsButton && (
+                <Button color="primary" className="w-full" size="sm" onClick={onShowBookings}>
+                  Ver reservas
+                </Button>
+              )}
+            </div>
+          </>
         )}
       </CardBody>
       <CardFooter className="text-small px-0 flex-col items-start">

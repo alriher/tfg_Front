@@ -45,7 +45,8 @@ export async function createSpace(
   lat: number,
   lon: number,
   img: string,
-  isSlotBased: boolean
+  isSlotBased: boolean,
+  user_id: number // nuevo parámetro
 ) {
   const response = await api.post("/spaces", {
     name,
@@ -58,6 +59,57 @@ export async function createSpace(
     lon,
     img,
     isSlotBased,
+    user_id, // incluir en el body
   });
+  return response.data;
+}
+
+// Obtener los espacios creados por un usuario (admin de espacios) con paginación
+export async function getSpacesByUserId(user_id: number, page = 1, pageSize = 15) {
+  const response = await api.get(`/spaces/user/${user_id}?page=${page}&pageSize=${pageSize}`);
+  return response.data; // { total, page, pageSize, spaces }
+}
+
+// Obtener reservas de un espacio con paginación (para administradores)
+export const getBookingsBySpaceIdPaginated = async (spaceId: number, page = 1, pageSize = 15) => {
+  const response = await api.get(`/bookings/space/${spaceId}?page=${page}&pageSize=${pageSize}`);
+  return response.data; // { total, page, pageSize, bookings }
+}
+
+// Actualizar espacio (edición)
+export async function updateSpace(
+  id: number,
+  name: string,
+  description: string,
+  address: string,
+  provincia: string,
+  localidad: string,
+  capacity: number,
+  lat: number,
+  lon: number,
+  img: string | null,
+  isSlotBased: boolean,
+  user_id?: number // opcional, por seguridad
+) {
+  const response = await api.put(`/spaces/${id}`, {
+    name,
+    description,
+    address,
+    provincia,
+    localidad,
+    capacity,
+    lat,
+    lon,
+    img,
+    isSlotBased,
+    user_id,
+  });
+  return response.data;
+}
+
+// Eliminar espacio
+export async function deleteSpace(id: number, user_id?: number) {
+  // Si el backend requiere user_id, pásalo como query param o en el body
+  const response = await api.delete(`/spaces/${id}` + (user_id ? `?user_id=${user_id}` : ''));
   return response.data;
 }

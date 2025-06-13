@@ -97,58 +97,60 @@ export default function AdminUsersComponent() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex justify-start gap-3 items-end pl-2 sm:pl-4">
-        <Input
-          isClearable
-          className="w-full sm:max-w-[44%]"
-          placeholder="Buscar usuario..."
-          startContent={<SearchIcon className="w-5 h-5 text-default-400" />}
-          value={filterValue}
-          onClear={() => setFilterValue("")}
-          onValueChange={setFilterValue}
-        />
+      <div className="container mx-auto bg-white rounded-xl shadow p-4">
+        <div className="flex justify-start gap-3 items-end mb-2">
+          <Input
+            isClearable
+            className="w-full sm:max-w-[44%]"
+            placeholder="Buscar usuario..."
+            startContent={<SearchIcon className="w-5 h-5 text-default-400" />}
+            value={filterValue}
+            onClear={() => setFilterValue("")}
+            onValueChange={setFilterValue}
+          />
+        </div>
+        <Table
+          aria-label="Tabla de usuarios admin"
+        >
+          <TableHeader columns={columns}>
+            {(column) => (
+              <TableColumn key={column.uid}>{column.name}</TableColumn>
+            )}
+          </TableHeader>
+          <TableBody emptyContent={"No se encontraron usuarios"} items={paginatedUsers}>
+            {(user) => (
+              <TableRow key={user.id}>
+                <TableCell>{user.username}</TableCell>
+                <TableCell>{user.email}</TableCell>
+                <TableCell>{user.name} {user.lastName}</TableCell>
+                <TableCell>
+                  {user.isSpaceAdmin ? (
+                    <span className="text-danger font-semibold">Admin</span>
+                  ) : (
+                    <span className="text-default-500">Usuario</span>
+                  )}
+                </TableCell>
+                <TableCell>
+                  <div className="flex gap-2">
+                    <button
+                      className={`px-2 py-1 rounded text-xs font-semibold border ${user.isSpaceAdmin ? 'border-danger text-danger' : 'border-primary text-primary'}`}
+                      onClick={() => handleToggleAdmin(user.id, !!user.isSpaceAdmin)}
+                    >
+                      {user.isSpaceAdmin ? 'Quitar admin' : 'Hacer admin'}
+                    </button>
+                    <button
+                      className="px-2 py-1 rounded text-xs font-semibold border border-danger text-danger"
+                      onClick={() => handleDeleteUser(user.id)}
+                    >
+                      Eliminar
+                    </button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
       </div>
-      <Table
-        aria-label="Tabla de usuarios admin"
-      >
-        <TableHeader columns={columns}>
-          {(column) => (
-            <TableColumn key={column.uid}>{column.name}</TableColumn>
-          )}
-        </TableHeader>
-        <TableBody emptyContent={"No se encontraron usuarios"} items={paginatedUsers}>
-          {(user) => (
-            <TableRow key={user.id}>
-              <TableCell>{user.username}</TableCell>
-              <TableCell>{user.email}</TableCell>
-              <TableCell>{user.name} {user.lastName}</TableCell>
-              <TableCell>
-                {user.isSpaceAdmin ? (
-                  <span className="text-danger font-semibold">Admin</span>
-                ) : (
-                  <span className="text-default-500">Usuario</span>
-                )}
-              </TableCell>
-              <TableCell>
-                <div className="flex gap-2">
-                  <button
-                    className={`px-2 py-1 rounded text-xs font-semibold border ${user.isSpaceAdmin ? 'border-danger text-danger' : 'border-primary text-primary'}`}
-                    onClick={() => handleToggleAdmin(user.id, !!user.isSpaceAdmin)}
-                  >
-                    {user.isSpaceAdmin ? 'Quitar admin' : 'Hacer admin'}
-                  </button>
-                  <button
-                    className="px-2 py-1 rounded text-xs font-semibold border border-danger text-danger"
-                    onClick={() => handleDeleteUser(user.id)}
-                  >
-                    Eliminar
-                  </button>
-                </div>
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
       <div className="flex justify-center items-center gap-4 mt-2">
         <Pagination
           disableCursorAnimation
