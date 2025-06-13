@@ -19,6 +19,7 @@ import {
 import SearchIcon from "./icons/SearchIcon";
 import { IUser } from "../interfaces/user";
 import { getAllUsers, updateUserSpaceAdmin, deleteUser } from "../services/AdminServices";
+import { useNavigate } from "react-router-dom";
 
 const columns = [
   { name: "Usuario", uid: "username" },
@@ -36,6 +37,7 @@ export default function AdminUsersComponent() {
   const [total, setTotal] = useState(0);
   const [userToDelete, setUserToDelete] = useState<IUser | null>(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const navigate = useNavigate();
 
   // Nuevo: resetear página a 1 cuando cambia el filtro
   useEffect(() => {
@@ -95,9 +97,13 @@ export default function AdminUsersComponent() {
     }
   }
 
+  function handleViewSpaces(userId: string) {
+    navigate(`/admin/users/${userId}/spaces`);
+  }
+
   return (
     <div className="flex flex-col gap-4">
-      <div className="container mx-auto bg-white rounded-xl shadow p-4">
+      <div className="container mx-auto bg-white rounded-xl">
         <div className="flex justify-start gap-3 items-end mb-2">
           <Input
             isClearable
@@ -133,13 +139,19 @@ export default function AdminUsersComponent() {
                 <TableCell>
                   <div className="flex gap-2">
                     <button
-                      className={`px-2 py-1 rounded text-xs font-semibold border ${user.isSpaceAdmin ? 'border-danger text-danger' : 'border-primary text-primary'}`}
+                      className={`px-3 py-1 rounded text-xs font-semibold border ${user.isSpaceAdmin ? 'border-danger text-danger' : 'border-primary text-primary'}`}
                       onClick={() => handleToggleAdmin(user.id, !!user.isSpaceAdmin)}
                     >
-                      {user.isSpaceAdmin ? 'Quitar admin' : 'Hacer admin'}
+                      {user.isSpaceAdmin ? 'Quitar Space-Admin' : 'Hacer Space-Admin'}
                     </button>
                     <button
-                      className="px-2 py-1 rounded text-xs font-semibold border border-danger text-danger"
+                      className="px-3 py-1 rounded text-xs font-semibold border border-black text-gray"
+                      onClick={() => handleViewSpaces(user.id)}
+                    >
+                      Ver espacios
+                    </button>
+                    <button
+                      className="px-3 py-1 rounded text-xs font-semibold border border-danger text-danger"
                       onClick={() => handleDeleteUser(user.id)}
                     >
                       Eliminar

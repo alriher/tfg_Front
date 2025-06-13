@@ -20,6 +20,24 @@ export function RequireSpaceAdmin({ children }: { children: JSX.Element }) {
   return children;
 }
 
+export function RequireSpaceAdminOrAdmin({ children }: { children: JSX.Element }) {
+  const { user } = useAuth();
+  const location = useLocation();
+
+  if (!user) {
+    // No logueado: redirige a login
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+
+  if (!user.isSpaceAdmin && !user.isAdmin) {
+    // Logueado pero no space admin ni admin: redirige a home
+    return <Navigate to="/home" replace />;
+  }
+
+  // Es space admin o admin: muestra el contenido protegido
+  return children;
+}
+
 // Subida de imagen a Cloudinary
 export async function uploadImageToCloudinary(file: File): Promise<string> {
   const url = "https://api.cloudinary.com/v1_1/dpot32ylv/image/upload"; // Sustituye <tu_cloud_name>

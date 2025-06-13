@@ -91,7 +91,7 @@ export default function CreateSpaceComponent() {
         Number(user?.id) // pasar el id del usuario autenticado
       );
       // Redirigir o mostrar éxito
-      navigate("/myspaces");
+      navigate("/space-admin/my-spaces");
     } catch (e: any) {
       setError("Error al crear el espacio. Inténtalo de nuevo.");
     } finally {
