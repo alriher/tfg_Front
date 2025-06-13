@@ -30,6 +30,13 @@ export const getBookingsByUserId = async (userId: number) => {
   return response.data;
 };
 
+export const getBookingsByUserIdPaginated = async (userId: number, page: number, pageSize: number) => {
+  const response = await api.get(`/bookings/user/${userId}`, {
+    params: { page, pageSize }
+  });
+  return response.data;
+};
+
 export const cancelBooking = async (bookingId: number) => {
   const response = await api.delete(`/bookings/${bookingId}`);
   return response.data;

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import SpaceCard from "./SpaceCard";
 import { IBooking } from "../interfaces/booking";
 import { useAuth } from "../providers/AuthProvider";
-import { getBookingsByUserId, cancelBooking, updateBooking, getBookingsBySpaceIdAndDate } from "../services/BookingService";
+import { getBookingsByUserIdPaginated, cancelBooking, updateBooking, getBookingsBySpaceIdAndDate } from "../services/BookingService";
 import {
   Modal,
   ModalContent,
@@ -15,6 +15,8 @@ import {
   Select,
   SelectItem,
   Divider,
+  Pagination,
+  PaginationItemType,
 } from "@nextui-org/react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { CalendarDate, today } from "@internationalized/date";
@@ -24,6 +26,27 @@ import moment from "moment";
 import { isAfterOrEqualToday, isBeforeValidation } from "../services/ValidationService";
 import { getErrorMessage } from "../services/ErrorServices";
 
+const ChevronIcon = (props: any) => (
+  <svg
+    aria-hidden="true"
+    fill="none"
+    focusable="false"
+    height="1em"
+    role="presentation"
+    viewBox="0 0 24 24"
+    width="1em"
+    {...props}
+  >
+    <path
+      d="M15.5 19l-7-7 7-7"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="1.5"
+    />
+  </svg>
+);
+
 function BookingsDetails() {
   const { user } = useAuth();
   const [bookings, setBookings] = useState<IBooking[]>([]);
@@ -31,6 +54,10 @@ function BookingsDetails() {
   const [bookingToEdit, setBookingToEdit] = useState<IBooking | null>(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const editModal = useDisclosure();
+  // Paginación
+  const [page, setPage] = useState(1);
+  const [pageSize] = useState(15);
+  const [total, setTotal] = useState(0);
 
   // Formulario para editar
   const {
@@ -59,11 +86,17 @@ function BookingsDetails() {
 
   useEffect(() => {
     if (user) {
-      getBookingsByUserId(Number(user.id)).then((bookings) => {
-        setBookings(bookings);
+      getBookingsByUserIdPaginated(Number(user.id), page, pageSize).then((res) => {
+        if (Array.isArray(res)) {
+          setBookings(res);
+          setTotal(res.length);
+        } else {
+          setBookings(res.bookings || []);
+          setTotal(res.total || 0);
+        }
       });
     }
-  }, [user]);
+  }, [user, page, pageSize]);
 
   // Cargar reservas ocupadas para la fecha seleccionada en el modal de edición
   const loadEditBookingsForDate = async (date: CalendarDate) => {
@@ -195,6 +228,64 @@ function BookingsDetails() {
     }
   };
 
+  const totalPages = Math.ceil(total / pageSize);
+
+  const renderItem = ({
+    ref,
+    key,
+    value,
+    isActive,
+    onNext,
+    onPrevious,
+    setPage,
+    className,
+  }: any) => {
+    if (value === PaginationItemType.NEXT) {
+      return (
+        <button
+          key={key}
+          className={"bg-default-200/50 min-w-8 w-8 h-8 " + className}
+          onClick={onNext}
+        >
+          <ChevronIcon className="rotate-180" />
+        </button>
+      );
+    }
+    if (value === PaginationItemType.PREV) {
+      return (
+        <button
+          key={key}
+          className={"bg-default-200/50 min-w-8 w-8 h-8 " + className}
+          onClick={onPrevious}
+        >
+          <ChevronIcon />
+        </button>
+      );
+    }
+    if (value === PaginationItemType.DOTS) {
+      return (
+        <button key={key} className={className}>
+          ...
+        </button>
+      );
+    }
+    return (
+      <button
+        key={key}
+        ref={ref}
+        className={
+          "bg-default-200/50 min-w-8 w-8 h-8 " +
+          (isActive
+            ? "text-white bg-gradient-to-br from-indigo-500 to-pink-500 font-bold "
+            : "") + className
+        }
+        onClick={() => setPage(value)}
+      >
+        {value}
+      </button>
+    );
+  };
+
   return (
     <>
       <div className="px-6 container m-auto grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-4">
@@ -217,6 +308,20 @@ function BookingsDetails() {
             />
           ))
         )}
+      </div>
+      <div className="flex justify-center items-center gap-4 mt-4">
+        <Pagination
+          disableCursorAnimation
+          showControls
+          className="gap-2"
+          initialPage={1}
+          radius="full"
+          renderItem={renderItem}
+          total={totalPages}
+          variant="light"
+          page={page}
+          onChange={setPage}
+        />
       </div>
       <Modal backdrop="blur" isOpen={isOpen} onClose={() => { setBookingToCancel(null); onClose(); }}>
         <ModalContent>

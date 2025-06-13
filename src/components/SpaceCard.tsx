@@ -9,7 +9,7 @@ export default function SpaceCard({ space, showButtons, onEdit, onCancel, onShow
   onCancel?: () => void,
   onShowBookings?: () => void,
   showBookingsButton?: boolean,
-  booking?: { dateStart: string, dateEnd: string, assistants?: number }
+  booking?: { dateStart: string, dateEnd: string, assistants?: number, username?: string }
 }) {
   const navigate = useNavigate();
   return (
@@ -75,6 +75,11 @@ export default function SpaceCard({ space, showButtons, onEdit, onCancel, onShow
             <p className="text-xs text-default-600 mt-1">
               {space.isSlotBased ? 'Asistentes' : 'Espacios'} reservados: {booking.assistants}
             </p>
+            {booking.username && (
+              <p className="text-xs text-default-600 mt-1">
+                Reservado por: <b>{booking.username}</b>
+              </p>
+            )}
           </>
         )}
       </CardFooter>

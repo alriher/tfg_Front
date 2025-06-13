@@ -81,7 +81,7 @@ export default function App() {
           <Link href="/home">
             <div className="size-16 flex items-center">
               <img
-                src="../public/logo.webp"
+                src="/logo.webp"
                 alt="Logo"
                 className="object-cover"
               />

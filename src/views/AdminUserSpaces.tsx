@@ -1,9 +1,8 @@
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import {
   getSpacesByUserId,
   deleteSpace,
-  getBookingsBySpaceIdPaginated,
   updateSpace,
   uploadImageToCloudinary,
 } from "../services/SpaceAdminServices";
@@ -19,9 +18,11 @@ import {
 } from "@nextui-org/react";
 import { ISpace } from "../interfaces/space";
 import SpaceForm from "../components/SpaceForm";
+import { getUserById } from "../services/UserService";
 
 export default function AdminUserSpaces() {
   const { userId } = useParams();
+  const navigate = useNavigate();
   const [spaces, setSpaces] = useState<ISpace[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
@@ -29,11 +30,7 @@ export default function AdminUserSpaces() {
   const [total, setTotal] = useState(0);
   const [spaceToEdit, setSpaceToEdit] = useState<ISpace | null>(null);
   const [spaceToDelete, setSpaceToDelete] = useState<ISpace | null>(null);
-  const [showBookingsModal, setShowBookingsModal] = useState(false);
-  const [bookings, setBookings] = useState<any[]>([]);
-  const [bookingsPage, setBookingsPage] = useState(1);
-  const [bookingsTotal, setBookingsTotal] = useState(0);
-  const [bookingsPageSize] = useState(15);
+  const [username, setUsername] = useState<string>("");
 
   useEffect(() => {
     if (userId) {
@@ -43,6 +40,9 @@ export default function AdminUserSpaces() {
         setTotal(res.total || (res.spaces ? res.spaces.length : 0));
         setLoading(false);
       });
+      getUserById(userId).then((user) => {
+        setUsername(user.username || user.name || "");
+      });
     }
   }, [userId, page, pageSize]);
 
@@ -51,17 +51,7 @@ export default function AdminUserSpaces() {
   const handleEdit = (space: ISpace) => setSpaceToEdit(space);
   const handleDelete = (space: ISpace) => setSpaceToDelete(space);
   const handleShowBookings = (space: ISpace) => {
-    setShowBookingsModal(true);
-    fetchBookings(space.id, 1);
-  };
-  const fetchBookings = (spaceId: number, page: number) => {
-    getBookingsBySpaceIdPaginated(spaceId, page, bookingsPageSize).then(
-      (res) => {
-        setBookings(res.bookings || res);
-        setBookingsTotal(res.total || (res.bookings ? res.bookings.length : 0));
-        setBookingsPage(page);
-      }
-    );
+    navigate(`/spaces/${space.id}/bookings`);
   };
 
   // Handler para guardar la edición
@@ -188,7 +178,7 @@ export default function AdminUserSpaces() {
       ) : (
         <>
           <h1 className="flex justify-center text-2xl font-bold mb-4">
-            Espacios del usuario
+            Espacios del usuario{username ? `: ${username}` : ""}
           </h1>
 
           <div className="px-6 container m-auto grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-4">
@@ -257,57 +247,6 @@ export default function AdminUserSpaces() {
               }}
             >
               Eliminar
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-      {/* Modal para ver reservas del espacio */}
-      <Modal
-        isOpen={showBookingsModal}
-        onClose={() => setShowBookingsModal(false)}
-        size="4xl"
-      >
-        <ModalContent>
-          <ModalHeader>Reservas del espacio</ModalHeader>
-          <ModalBody>
-            {bookings.length === 0 ? (
-              <div>No hay reservas para este espacio.</div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {bookings.map((booking) => (
-                  <div key={booking.id} className="border rounded p-2">
-                    <div>
-                      <b>Usuario:</b> {booking.userId}
-                    </div>
-                    <div>
-                      <b>Fecha inicio:</b> {booking.dateStart}
-                    </div>
-                    <div>
-                      <b>Fecha fin:</b> {booking.dateEnd}
-                    </div>
-                    <div>
-                      <b>Asistentes:</b> {booking.assistants}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-            <div className="flex justify-center items-center gap-4 mt-4">
-              <Pagination
-                disableCursorAnimation
-                showControls
-                className="gap-2"
-                initialPage={1}
-                radius="full"
-                total={Math.ceil(bookingsTotal / bookingsPageSize)}
-                page={bookingsPage}
-                onChange={(page) => fetchBookings(bookings[0]?.spaceId, page)}
-              />
-            </div>
-          </ModalBody>
-          <ModalFooter>
-            <Button color="default" onPress={() => setShowBookingsModal(false)}>
-              Cerrar
             </Button>
           </ModalFooter>
         </ModalContent>

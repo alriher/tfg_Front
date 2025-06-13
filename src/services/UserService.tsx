@@ -10,3 +10,8 @@ export async function updateUserProfile(userId: string, data: any) {
 export async function changeUserPassword(userId: number, currentPassword: string, newPassword: string) {
   return api.post(`/users/${userId}/change-password`, { currentPassword, newPassword });
 }
+
+export async function getUserById(userId: string) {
+  const response = await api.get(`/users/${userId}`);
+  return response.data;
+}
