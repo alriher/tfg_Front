@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
-import { getSpacesByUserId, deleteSpace } from "../services/SpaceAdminServices";
+import { getSpacesByUserId, deleteSpace } from "../services/AdminSpaceServices";
 import { useAuth } from "../providers/AuthProvider";
 import SpaceCard from "../components/SpaceCard";
 import { ISpace } from "../interfaces/space";
 import { Pagination, PaginationItemType, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure } from "@nextui-org/react";
-import { getBookingsBySpaceIdPaginated } from "../services/SpaceAdminServices";
+import { getBookingsBySpaceIdPaginated } from "../services/AdminSpaceServices";
 import SpaceForm from "../components/SpaceForm";
-import { updateSpace, uploadImageToCloudinary} from "../services/SpaceAdminServices";
+import { updateSpace, uploadImageToCloudinary} from "../services/AdminSpaceServices";
 import { useNavigate } from "react-router-dom";
 
 const ChevronIcon = (props: any) => (

@@ -11,7 +11,7 @@ import provinces from "../assets/provincias.json";
 import municipalities from "../assets/municipios.json";
 import SpaceMap from "../components/SpaceMap";
 import { getErrorMessage } from "../services/ErrorServices";
-import { uploadImageToCloudinary } from "../services/SpaceAdminServices";
+import { uploadImageToCloudinary } from "../services/AdminSpaceServices";
 import { ISpace } from "../interfaces/space";
 
 interface SpaceFormProps {

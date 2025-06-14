@@ -5,7 +5,7 @@ import {
   deleteSpace,
   updateSpace,
   uploadImageToCloudinary,
-} from "../services/SpaceAdminServices";
+} from "../services/AdminSpaceServices";
 import SpaceCard from "../components/SpaceCard";
 import {
   Pagination,

@@ -2,14 +2,15 @@ import { Card, CardBody, CardFooter, Image, Button } from "@nextui-org/react";
 import { ISpace } from "../interfaces/space";
 import { useNavigate } from "react-router-dom";
 
-export default function SpaceCard({ space, showButtons, onEdit, onCancel, onShowBookings, showBookingsButton, booking }: {
+export default function SpaceCard({ space, showButtons, onEdit, onCancel, onShowBookings, showBookingsButton, booking, adminView }: {
   space: ISpace,
   showButtons?: boolean,
   onEdit?: () => void,
   onCancel?: () => void,
   onShowBookings?: () => void,
   showBookingsButton?: boolean,
-  booking?: { dateStart: string, dateEnd: string, assistants?: number, username?: string }
+  booking?: { dateStart: string, dateEnd: string, assistants?: number, username?: string },
+  adminView?: boolean
 }) {
   const navigate = useNavigate();
   return (
@@ -56,6 +57,13 @@ export default function SpaceCard({ space, showButtons, onEdit, onCancel, onShow
       <CardFooter className="text-small px-0 flex-col items-start">
         <b>{space.name}</b>
         <p className="text-default-500 text-sm">{space.address}</p>
+        <p className="text-default-500 text-sm">{space.localidad}, {space.provincia}</p>
+        {/* Mostrar el creador si viene la prop adminView y space.user existe */}
+        {adminView && space.user && (
+          <p className="text-xs text-default-600 mt-1">
+            Creado por: <b>{typeof space.user === 'string' ? space.user : space.user.username}</b>
+          </p>
+        )}
         {showButtons && booking && (
           <>
             <p className="text-xs text-default-600 mt-1">

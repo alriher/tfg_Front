@@ -13,7 +13,7 @@ import AdminUsers from "./views/AdminUsers";
 import AdminSpaces from "./views/AdminSpaces";
 import AdminBookings from "./views/AdminBookings";
 import { RequireAdmin } from "./services/AdminServices";
-import { RequireSpaceAdmin, RequireSpaceAdminOrAdmin } from "./services/SpaceAdminServices";
+import { RequireSpaceAdmin, RequireSpaceAdminOrAdmin } from "./services/AdminSpaceServices";
 import CreateSpace from "./views/CreateSpace";
 import MySpaces from "./views/MySpaces";
 import AdminUserSpaces from "./views/AdminUserSpaces";

@@ -13,7 +13,7 @@ import provinces from "../assets/provincias.json";
 import municipalities from "../assets/municipios.json";
 import SpaceMap from "../components/SpaceMap";
 import { getErrorMessage } from "../services/ErrorServices";
-import { uploadImageToCloudinary, createSpace } from "../services/SpaceAdminServices";
+import { uploadImageToCloudinary, createSpace } from "../services/AdminSpaceServices";
 import { useAuth } from "../providers/AuthProvider";
 
 export default function CreateSpaceComponent() {

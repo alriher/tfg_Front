@@ -1,4 +1,5 @@
 import { IBooking } from "./booking";
+import { IUser } from "./user";
 
 export interface ISpace {
   id: number;
@@ -15,4 +16,5 @@ export interface ISpace {
   createdAt: string;
   updatedAt: string;
   isSlotBased: boolean;
+  user?: IUser;
 }

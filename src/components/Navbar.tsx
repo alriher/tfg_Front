@@ -15,7 +15,7 @@ import { useAuth } from "../providers/AuthProvider";
 import ProfileAvatar from "./ProfileAvatar";
 import { useNavigate } from "react-router-dom";
 import AdminSidebar from "./AdminSidebar";
-import SpaceAdminSidebar from "./SpaceAdminSidebar";
+import SpaceAdminSidebar from "./AdminSpaceSidebar";
 
 export default function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
