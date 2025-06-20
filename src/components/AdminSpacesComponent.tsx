@@ -24,6 +24,7 @@ import { useNavigate } from "react-router-dom";
 import provinces from "../assets/provincias.json";
 import municipalities from "../assets/municipios.json";
 import SearchIcon from "./icons/SearchIcon";
+import SpacesFilter from "./SpacesFilter";
 
 const ChevronIcon = (props: any) => (
   <svg
@@ -214,84 +215,17 @@ function AdminSpacesComponent() {
         Espacios (admin)
       </h1>
       {/* Filtros */}
-      <form
-        className="flex flex-wrap gap-2 mb-4 justify-center"
+      <SpacesFilter
+        filterProvincia={filterProvincia}
+        setFilterProvincia={setFilterProvincia}
+        filterLocalidad={filterLocalidad}
+        setFilterLocalidad={setFilterLocalidad}
+        filterName={filterName}
+        setFilterName={setFilterName}
+        filterUsername={filterUsername}
+        setFilterUsername={setFilterUsername}
         onSubmit={handleFilter}
-      >
-        <Autocomplete
-          label={<span>Provincia<span style={{color: 'red'}}>*</span></span>}
-          placeholder="Busca una provincia"
-          selectedKey={filterProvincia}
-          onSelectionChange={(value) => {
-            setFilterProvincia(value as string);
-            setSelectedProvince(value as string);
-            setFilterLocalidad("");
-          }}
-          defaultItems={provinces}
-          className="w-40"
-          aria-label="Selector de provincia"
-          allowsCustomValue={false}
-          onClear={() => {
-            setFilterProvincia("");
-            setSelectedProvince("");
-            setFilterLocalidad("");
-          }}
-        >
-          {(province: any) => (
-            <AutocompleteItem key={province.nombre} value={province.nombre}>
-              {province.nombre}
-            </AutocompleteItem>
-          )}
-        </Autocomplete>
-        <Autocomplete
-          label={<span>Localidad<span style={{color: 'red'}}>*</span></span>}
-          placeholder="Busca una localidad"
-          selectedKey={filterLocalidad}
-          onSelectionChange={(value) => {
-            setFilterLocalidad(value as string);
-          }}
-          defaultItems={
-            selectedProvince
-              ? municipalities.filter(
-                  (m: any) => m.provinceId === getProvinceId(selectedProvince)
-                )
-              : []
-          }
-          className="w-40"
-          aria-label="Selector de localidad"
-          isDisabled={!selectedProvince}
-          allowsCustomValue={false}
-          onClear={() => setFilterLocalidad("")}
-        >
-          {(item: any) => (
-            <AutocompleteItem key={item.nombre} value={item.nombre}>
-              {item.nombre}
-            </AutocompleteItem>
-          )}
-        </Autocomplete>
-        <Input
-          placeholder="Nombre del espacio"
-          value={filterName}
-          onValueChange={setFilterName}
-          className="w-48"
-        />
-        <Input
-          placeholder="Usuario creador"
-          value={filterUsername}
-          onValueChange={setFilterUsername}
-          className="w-48"
-        />
-        <Button
-          color="primary"
-          type="submit"
-          startContent={undefined}
-          radius="full"
-          isIconOnly
-          aria-label="Buscar"
-        >
-          <SearchIcon className="w-5 h-5" />
-        </Button>
-      </form>
+      />
       <div className="px-6 container m-auto grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-4">
         {spaces.map((space) => (
           <SpaceCard

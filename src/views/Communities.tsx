@@ -4,7 +4,7 @@ import SearchBar from "../components/SearchBar";
 function Communities() {
   return (
     <>
-      <SearchBar  />
+      <SearchBar />
       <CommunitiesComponent />
     </>
   );

@@ -3,6 +3,7 @@ import SpaceCard from "./SpaceCard";
 import { ISpace } from "../interfaces/space";
 import { getSpaces } from "../services/CommunitiesService";
 import { Pagination, PaginationItemType } from "@nextui-org/react";
+import SpacesFilter from "./SpacesFilter";
 
 const ChevronIcon = (props: any) => (
   <svg
@@ -30,13 +31,38 @@ function CommunitiesComponent() {
   const [page, setPage] = useState(1);
   const [pageSize] = useState(15);
   const [total, setTotal] = useState(0);
+  const [filterProvincia, setFilterProvincia] = useState("");
+  const [filterLocalidad, setFilterLocalidad] = useState("");
+  const [filterName, setFilterName] = useState("");
 
-  useEffect(() => {
-    getSpaces(page, pageSize).then((res) => {
+  const fetchSpaces = () => {
+    getSpaces(page, pageSize, {
+      provincia: filterProvincia,
+      localidad: filterLocalidad,
+      name: filterName,
+    }).then((res) => {
       setSpaces(res.spaces);
       setTotal(res.total);
     });
+  };
+
+  useEffect(() => {
+    fetchSpaces();
+    // eslint-disable-next-line
   }, [page, pageSize]);
+
+  const handleFilter = (e: React.FormEvent) => {
+    e.preventDefault();
+    setPage(1);
+    getSpaces(1, pageSize, {
+      provincia: filterProvincia,
+      localidad: filterLocalidad,
+      name: filterName,
+    }).then((res) => {
+      setSpaces(res.spaces);
+      setTotal(res.total);
+    });
+  };
 
   const totalPages = Math.ceil(total / pageSize);
 
@@ -97,6 +123,18 @@ function CommunitiesComponent() {
 
   return (
     <>
+    <div className="mt-4">
+<SpacesFilter
+        filterProvincia={filterProvincia}
+        setFilterProvincia={setFilterProvincia}
+        filterLocalidad={filterLocalidad}
+        setFilterLocalidad={setFilterLocalidad}
+        filterName={filterName}
+        setFilterName={setFilterName}
+        onSubmit={handleFilter}
+      />
+    </div>
+      
       <div className="px-6 container m-auto grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-4">
         {spaces.map((space) => (
           <SpaceCard key={space.id} space={space} />
