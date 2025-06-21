@@ -63,7 +63,7 @@ const RegisterForm = () => {
       data.phone
     )
       .then(() => {
-        const { from } = location.state || { from: { pathname: "/home" } };
+        const { from } = location.state || { from: { pathname: "/communities" } };
         navigate(from);
       })
       .catch((error) => {

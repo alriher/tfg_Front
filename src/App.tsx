@@ -1,6 +1,5 @@
 import { Route, Routes, useNavigate } from "react-router-dom";
 import "./App.css";
-import Home from "./views/Home";
 import NavbarComponent from "./components/Navbar";
 import Communities from "./views/Communities";
 import Login from "./views/Login";
@@ -18,6 +17,7 @@ import CreateSpace from "./views/CreateSpace";
 import MySpaces from "./views/MySpaces";
 import AdminUserSpaces from "./views/AdminUserSpaces";
 import SpaceBookingsDetails from "./views/SpaceBookingsDetails";
+import Contacto from "./views/Contacto";
 
 function App() {
   const navigate = useNavigate();
@@ -25,9 +25,9 @@ function App() {
     <NextUIProvider navigate={navigate} locale="es-ES">
       <NavbarComponent />
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/home" element={<Home />} />
+        <Route path="/" element={<Communities />} />
         <Route path="/communities" element={<Communities />} />
+        <Route path="/contact" element={<Contacto />} />
         <Route path="/spaces/:id" element={<SpaceDetails />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />

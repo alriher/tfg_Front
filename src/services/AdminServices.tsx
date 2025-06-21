@@ -12,8 +12,8 @@ export function RequireAdmin({ children }: { children: JSX.Element }) {
   }
 
   if (!user.isAdmin) {
-    // Logueado pero no admin: redirige a home
-    return <Navigate to="/home" replace />;
+    // Logueado pero no admin: redirige a communities
+    return <Navigate to="/communities" replace />;
   }
 
   // Es admin: muestra el contenido protegido

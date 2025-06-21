@@ -27,8 +27,7 @@ export default function App() {
   };
 
   const mobileMenu: IMenuItem[] = [
-    { item: "Inicio", route: "/home" },
-    { item: "Comunidades", route: "/communities" },
+    { item: "Espacios", route: "/communities" },
     { item: "Reservas", route: "/bookings" },
     { item: "Contacto", route: "/contact" },
     { item: "Iniciar sesión", route: "/login" },
@@ -36,8 +35,7 @@ export default function App() {
   ];
 
   const menuItems: IMenuItem[] = [
-    { item: "Inicio", route: "/home" },
-    { item: "Comunidades", route: "/communities" },
+    { item: "Espacios", route: "/communities" },
     { item: "Reservas", route: "/bookings" },
     { item: "Contacto", route: "/contact" },
   ];
@@ -78,7 +76,7 @@ export default function App() {
           className="sm:hidden"
         />
         <NavbarBrand>
-          <Link href="/home">
+          <Link href="/communities">
             <div className="size-16 flex items-center">
               <img
                 src="/logo.webp"

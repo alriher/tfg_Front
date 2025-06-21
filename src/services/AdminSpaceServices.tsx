@@ -13,7 +13,7 @@ export function RequireSpaceAdmin({ children }: { children: JSX.Element }) {
 
   if (!user.isSpaceAdmin) {
     // Logueado pero no space admin: redirige a home
-    return <Navigate to="/home" replace />;
+    return <Navigate to="/communities" replace />;
   }
 
   // Es space admin: muestra el contenido protegido
@@ -31,7 +31,7 @@ export function RequireSpaceAdminOrAdmin({ children }: { children: JSX.Element }
 
   if (!user.isSpaceAdmin && !user.isAdmin) {
     // Logueado pero no space admin ni admin: redirige a home
-    return <Navigate to="/home" replace />;
+    return <Navigate to="/communities" replace />;
   }
 
   // Es space admin o admin: muestra el contenido protegido
