@@ -1,71 +1,45 @@
 import React, { useEffect, useState } from "react";
-import SpaceCard from "./SpaceCard";
-import { IBooking } from "../interfaces/booking";
-import { useAuth } from "../providers/AuthProvider";
+import { useParams } from "react-router-dom";
 import {
   getBookingsByUserIdPaginated,
   cancelBooking,
   updateBooking,
   getBookingsBySpaceIdAndDate,
 } from "../services/BookingService";
+import { IBooking } from "../interfaces/booking";
 import {
+  Button,
+  Pagination,
   Modal,
   ModalContent,
   ModalHeader,
   ModalBody,
   ModalFooter,
-  Button,
   useDisclosure,
   DatePicker,
   Select,
   SelectItem,
   Divider,
-  Pagination,
-  PaginationItemType,
 } from "@nextui-org/react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { CalendarDate, today } from "@internationalized/date";
 import { schedule } from "../assets/schedules";
-import moment from "moment";
-
-import {
-  isAfterOrEqualToday,
-  isBeforeValidation,
-} from "../services/ValidationService";
+import { isAfterOrEqualToday, isBeforeValidation } from "../services/ValidationService";
 import { getErrorMessage } from "../services/ErrorServices";
+import moment from "moment";
+import SpaceCard from "./SpaceCard";
 
-const ChevronIcon = (props: any) => (
-  <svg
-    aria-hidden="true"
-    fill="none"
-    focusable="false"
-    height="1em"
-    role="presentation"
-    viewBox="0 0 24 24"
-    width="1em"
-    {...props}
-  >
-    <path
-      d="M15.5 19l-7-7 7-7"
-      stroke="currentColor"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth="1.5"
-    />
-  </svg>
-);
-
-function BookingsDetails() {
-  const { user } = useAuth();
+export default function AdminUserBookingsComponent() {
+  const { userId } = useParams();
   const [bookings, setBookings] = useState<IBooking[]>([]);
   const [bookingToCancel, setBookingToCancel] = useState<IBooking | null>(null);
   const [bookingToEdit, setBookingToEdit] = useState<IBooking | null>(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const editModal = useDisclosure();
-  // Paginación
   const [page, setPage] = useState(1);
   const [pageSize] = useState(15);
   const [total, setTotal] = useState(0);
+  const [loading, setLoading] = useState(true);
 
   // Formulario para editar
   const {
@@ -85,31 +59,26 @@ function BookingsDetails() {
     control: editControl,
     name: "schedule",
   });
-  // Observa la fecha seleccionada en el formulario de edición
   const entryDate = useWatch({ control: editControl, name: "entryDate" });
-
-  // Helpers para editar: calcular horarios ocupados para la fecha seleccionada
   const [editFullSchedules, setEditFullSchedules] = useState<string[]>([]);
   const editAssistantsPerHourRef = React.useRef<{ [key: string]: number }>({});
-
-  // Estado para el máximo de asistentes editables según la hora seleccionada
   const [editMaxAssistants, setEditMaxAssistants] = useState(1);
 
   useEffect(() => {
-    if (user) {
-      getBookingsByUserIdPaginated(Number(user.id), page, pageSize).then(
-        (res) => {
-          if (Array.isArray(res)) {
-            setBookings(res);
-            setTotal(res.length);
-          } else {
-            setBookings(res.bookings || []);
-            setTotal(res.total || 0);
-          }
+    if (userId) {
+      setLoading(true);
+      getBookingsByUserIdPaginated(Number(userId), page, pageSize).then((res) => {
+        if (Array.isArray(res)) {
+          setBookings(res);
+          setTotal(res.length);
+        } else {
+          setBookings(res.bookings || []);
+          setTotal(res.total || 0);
         }
-      );
+        setLoading(false);
+      });
     }
-  }, [user, page, pageSize]);
+  }, [userId, page, pageSize]);
 
   // Cargar reservas ocupadas para la fecha seleccionada en el modal de edición
   const loadEditBookingsForDate = async (date: CalendarDate) => {
@@ -126,14 +95,11 @@ function BookingsDetails() {
       const reservas = await getBookingsBySpaceIdAndDate(space.id, dateStr);
       const assistantsPerHour: { [key: string]: number } = {};
       reservas.forEach((r: IBooking) => {
-        // No contar la propia reserva al editar
         if (r.id === bookingToEdit.id) return;
         const start = moment(r.dateStart).format("HH:mm");
         const end = moment(r.dateEnd).format("HH:mm");
         const scheduleValue = `${start}-${end}`;
-        const scheduleKey = schedule.find(
-          (s) => s.value === scheduleValue
-        )?.key;
+        const scheduleKey = schedule.find((s) => s.value === scheduleValue)?.key;
         if (scheduleKey) {
           assistantsPerHour[scheduleKey] =
             (assistantsPerHour[scheduleKey] || 0) + (r.assistants || 1);
@@ -147,6 +113,21 @@ function BookingsDetails() {
     }
   };
 
+  // Limpiar asistentes cada vez que cambie la hora en el modal de edición
+  useEffect(() => {
+    if (editModal.isOpen) {
+      setEditValue("assistants", "");
+    }
+  }, [editSelectedSchedule, editModal.isOpen]);
+
+  // Limpiar horario y asistentes cada vez que cambie la fecha en el modal de edición
+  useEffect(() => {
+    if (editModal.isOpen) {
+      setEditValue("schedule", "");
+      setEditValue("assistants", "");
+    }
+  }, [entryDate, editModal.isOpen]);
+
   // Cargar horarios ocupados al abrir el modal de edición o cambiar la fecha
   useEffect(() => {
     if (
@@ -155,13 +136,11 @@ function BookingsDetails() {
       editControl._formValues.entryDate
     ) {
       loadEditBookingsForDate(editControl._formValues.entryDate);
-      // Limpiar asistentes si no hay horario seleccionado
       if (!editControl._formValues.schedule) {
         setEditValue("assistants", "");
         setEditMaxAssistants(1);
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editModal.isOpen, bookingToEdit, editControl._formValues.entryDate]);
 
   // Cargar horarios ocupados también al abrir el modal por primera vez (cuando hay horario ya seleccionado)
@@ -174,7 +153,6 @@ function BookingsDetails() {
     ) {
       loadEditBookingsForDate(editControl._formValues.entryDate);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editModal.isOpen]);
 
   // Actualiza el máximo de asistentes cuando cambia el horario seleccionado en el modal de edición
@@ -185,15 +163,13 @@ function BookingsDetails() {
       (bookingToEdit.Space || bookingToEdit.spaceId)
     ) {
       const space = bookingToEdit.Space ?? bookingToEdit.spaceId;
-      const reserved =
-        editAssistantsPerHourRef.current[editSelectedSchedule] || 0;
+      const reserved = editAssistantsPerHourRef.current[editSelectedSchedule] || 0;
       let max = space.capacity - reserved;
       setEditMaxAssistants(Math.max(max, 1));
       if (Number(editControl._formValues.assistants) > max) {
         setEditValue("assistants", String(max));
       }
     } else {
-      // Si no hay horario seleccionado, limpiar asistentes y poner max a 1
       setEditValue("assistants", "");
       setEditMaxAssistants(1);
     }
@@ -204,19 +180,25 @@ function BookingsDetails() {
     editControl._formValues.entryDate,
   ]);
 
-  // Limpiar asistentes cada vez que cambie la hora en el modal de edición
-  useEffect(() => {
-    if (editModal.isOpen) {
-      setEditValue("assistants", "");
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [editSelectedSchedule]);
+  const totalPages = Math.ceil(total / pageSize);
 
-  // Limpiar horario y asistentes cada vez que cambie la fecha en el modal de edición (patrón recomendado)
-  useEffect(() => {
-    setEditValue("schedule", "");
-    setEditValue("assistants", "");
-  }, [entryDate, setEditValue]);
+  const handleCancel = (booking: IBooking) => {
+    setBookingToCancel(booking);
+    onOpen();
+  };
+
+  const confirmCancel = async () => {
+    if (bookingToCancel) {
+      try {
+        await cancelBooking(bookingToCancel.id);
+        setBookings((prev) => prev.filter((b) => b.id !== bookingToCancel.id));
+        setBookingToCancel(null);
+        onClose();
+      } catch (error) {
+        alert("Error al cancelar la reserva.");
+      }
+    }
+  };
 
   // Handler para abrir el modal de edición
   const handleEdit = (booking: IBooking) => {
@@ -226,7 +208,6 @@ function BookingsDetails() {
       "entryDate",
       new CalendarDate(start.year(), start.month() + 1, start.date())
     );
-    // No seleccionamos la hora ni los asistentes al abrir el modal
     setEditValue("schedule", "");
     setEditValue("assistants", "");
     editModal.onOpen();
@@ -273,26 +254,28 @@ function BookingsDetails() {
     }
   };
 
-  const handleCancel = (booking: IBooking) => {
-    setBookingToCancel(booking);
-    onOpen();
+  // Handler para renderizar las opciones de horario, deshabilitando las horas pasadas si es hoy
+  const renderScheduleOptions = () => {
+    const now = today("Europe/Madrid").toDate("Europe/Madrid");
+    const isToday =
+      entryDate &&
+      entryDate.year === now.getFullYear() &&
+      entryDate.month === now.getMonth() + 1 &&
+      entryDate.day === now.getDate();
+    const currentHour = new Date().getHours();
+    return schedule.map((s) => {
+      const [startHour] = s.value.split(":");
+      const hour = parseInt(startHour, 10);
+      const isPast = isToday && hour <= currentHour;
+      return (
+        <SelectItem key={s.key} isDisabled={isPast || editFullSchedules.includes(s.key)}>
+          {s.value}
+        </SelectItem>
+      );
+    });
   };
 
-  const confirmCancel = async () => {
-    if (bookingToCancel) {
-      try {
-        await cancelBooking(bookingToCancel.id);
-        setBookings((prev) => prev.filter((b) => b.id !== bookingToCancel.id));
-        setBookingToCancel(null);
-        onClose();
-      } catch (error) {
-        alert("Error al cancelar la reserva.");
-      }
-    }
-  };
-
-  const totalPages = Math.ceil(total / pageSize);
-
+  // Copia el estilo de paginación de CommunitiesComponent
   const renderItem = ({
     ref,
     key,
@@ -303,29 +286,62 @@ function BookingsDetails() {
     setPage,
     className,
   }: any) => {
-    if (value === PaginationItemType.NEXT) {
+    if (value === "next") {
       return (
         <button
           key={key}
           className={"bg-default-200/50 min-w-8 w-8 h-8 " + className}
           onClick={onNext}
         >
-          <ChevronIcon className="rotate-180" />
+          <svg
+            aria-hidden="true"
+            fill="none"
+            focusable="false"
+            height="1em"
+            role="presentation"
+            viewBox="0 0 24 24"
+            width="1em"
+            className="rotate-180"
+          >
+            <path
+              d="M15.5 19l-7-7 7-7"
+              stroke="currentColor"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="1.5"
+            />
+          </svg>
         </button>
       );
     }
-    if (value === PaginationItemType.PREV) {
+    if (value === "prev") {
       return (
         <button
           key={key}
           className={"bg-default-200/50 min-w-8 w-8 h-8 " + className}
           onClick={onPrevious}
         >
-          <ChevronIcon />
+          <svg
+            aria-hidden="true"
+            fill="none"
+            focusable="false"
+            height="1em"
+            role="presentation"
+            viewBox="0 0 24 24"
+            width="1em"
+          >
+            <path
+              d="M15.5 19l-7-7 7-7"
+              stroke="currentColor"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="1.5"
+            />
+          </svg>
         </button>
       );
     }
-    if (value === PaginationItemType.DOTS) {
+    if (value === "dots") {
       return (
         <button key={key} className={className}>
           ...
@@ -337,11 +353,9 @@ function BookingsDetails() {
         key={key}
         ref={ref}
         className={
-          "bg-default-200/50 min-w-8 w-8 h-8 " +
           (isActive
             ? "text-white bg-gradient-to-br from-indigo-500 to-pink-500 font-bold "
-            : "") +
-          className
+            : "") + className
         }
         onClick={() => setPage(value)}
       >
@@ -350,36 +364,34 @@ function BookingsDetails() {
     );
   };
 
+  if (loading) return <div className="mt-4">Cargando reservas...</div>;
+
   return (
-    <>
+    <div className="mt-4">
       <h1 className="flex justify-center text-2xl font-bold mb-4">
-        Reservas del espacio
+        Reservas del usuario
       </h1>
       <div className="px-6 container m-auto grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-4">
         {bookings.length === 0 ? (
           <div className="col-span-full text-center text-default-500 py-12 flex flex-col items-center gap-4">
-            <div>No tienes reservas.</div>
-            <Button
-              color="primary"
-              onClick={() => (window.location.href = "/communities")}
-            >
-              Haz una reserva
-            </Button>
+            <div>No hay reservas para este usuario.</div>
           </div>
         ) : (
           bookings.map((booking) => (
-            <SpaceCard
-              key={booking.id}
-              space={booking.Space ?? booking.spaceId}
-              booking={{
-                dateStart: booking.dateStart,
-                dateEnd: booking.dateEnd,
-                assistants: booking.assistants,
-              }}
-              showButtons={true}
-              onEdit={() => handleEdit(booking)}
-              onCancel={() => handleCancel(booking)}
-            />
+            <div key={booking.id} className="flex flex-col items-stretch">
+              <SpaceCard
+                space={booking.Space ?? booking.spaceId}
+                booking={{
+                  dateStart: booking.dateStart,
+                  dateEnd: booking.dateEnd,
+                  assistants: booking.assistants,
+                  username: booking.userId?.username,
+                }}
+                showButtons={true}
+                onEdit={() => handleEdit(booking)}
+                onCancel={() => handleCancel(booking)}
+              />
+            </div>
           ))
         )}
       </div>
@@ -416,65 +428,25 @@ function BookingsDetails() {
                 {bookingToCancel && (
                   <>
                     <p className="text-xs text-default-600 mt-1">
-                      Espacio:{" "}
-                      <b>
-                        {
-                          (bookingToCancel.Space ?? bookingToCancel.spaceId)
-                            ?.name
-                        }
-                      </b>
+                      Espacio: <b>{bookingToCancel.Space?.name || bookingToCancel.spaceId?.name}</b>
                     </p>
                     <p className="text-xs text-default-600 mt-1">
-                      Fecha:{" "}
-                      {(() => {
-                        const start = new Date(bookingToCancel.dateStart);
-                        const end = new Date(bookingToCancel.dateEnd);
-                        const day = start.getDate();
-                        const month = start.getMonth() + 1;
-                        const year = start.getFullYear();
-                        const startHour = start
-                          .getHours()
-                          .toString()
-                          .padStart(2, "0");
-                        const startMin = start
-                          .getMinutes()
-                          .toString()
-                          .padStart(2, "0");
-                        const endHour = end
-                          .getHours()
-                          .toString()
-                          .padStart(2, "0");
-                        const endMin = end
-                          .getMinutes()
-                          .toString()
-                          .padStart(2, "0");
-                        return `${day}/${month}/${year}, ${startHour}:${startMin}-${endHour}:${endMin}`;
-                      })()}
+                      Fecha: {moment(bookingToCancel.dateStart).format("DD/MM/YYYY")}
                     </p>
                     <p className="text-xs text-default-600 mt-1">
-                      {(bookingToCancel.Space ?? bookingToCancel.spaceId)
-                        ?.isSlotBased
-                        ? "Asistentes"
-                        : "Espacios"}{" "}
-                      reservados: {bookingToCancel.assistants}
+                      Hora: {moment(bookingToCancel.dateStart).format("HH:mm")} - {moment(bookingToCancel.dateEnd).format("HH:mm")}
+                    </p>
+                    <p className="text-xs text-default-600 mt-1">
+                      Asistentes: {bookingToCancel.assistants}
                     </p>
                   </>
                 )}
               </ModalBody>
               <ModalFooter>
-                <Button
-                  color="default"
-                  onPress={() => {
-                    setBookingToCancel(null);
-                    close();
-                  }}
-                >
+                <Button color="default" onPress={() => { setBookingToCancel(null); close(); }}>
                   No cancelar
                 </Button>
-                <Button
-                  className="bg-[#db4664] text-white"
-                  onPress={confirmCancel}
-                >
+                <Button className="bg-[#db4664] text-white" onPress={confirmCancel}>
                   Cancelar reserva
                 </Button>
               </ModalFooter>
@@ -520,10 +492,10 @@ function BookingsDetails() {
                             field: "fecha de la reserva",
                             date: `${
                               today("Europe/Madrid").add({ months: 1 }).day
-                            }/${
-                              today("Europe/Madrid").add({ months: 1 }).month
-                            }/${
-                              today("Europe/Madrid").add({ months: 1 }).year
+                            }/$
+                              {today("Europe/Madrid").add({ months: 1 }).month
+                            }/$
+                              {today("Europe/Madrid").add({ months: 1 }).year
                             }`,
                           }
                         )}
@@ -543,38 +515,19 @@ function BookingsDetails() {
                     control={editControl}
                     name="schedule"
                     rules={{ required: true }}
-                    render={({ field }) => {
-                      const now =
-                        today("Europe/Madrid").toDate("Europe/Madrid");
-                      const isToday =
-                        entryDate &&
-                        entryDate.year === now.getFullYear() &&
-                        entryDate.month === now.getMonth() + 1 &&
-                        entryDate.day === now.getDate();
-                      const currentHour = new Date().getHours();
-                      return (
-                        <Select
-                          {...field}
-                          key={String(entryDate)} // Fuerza el reseteo visual al cambiar la fecha
-                          placeholder="Selecciona la hora de la reserva"
-                          label="Hora de la reserva"
-                          isRequired={true}
-                          className="w-full"
-                          disabledKeys={editFullSchedules}
-                        >
-                          {schedule.map((s) => {
-                            const [startHour] = s.value.split(":");
-                            const hour = parseInt(startHour, 10);
-                            const isPast = isToday && hour <= currentHour;
-                            return (
-                              <SelectItem key={s.key} isDisabled={isPast}>
-                                {s.value}
-                              </SelectItem>
-                            );
-                          })}
-                        </Select>
-                      );
-                    }}
+                    render={({ field }) => (
+                      <Select
+                        {...field}
+                        key={String(entryDate)}
+                        placeholder="Selecciona la hora de la reserva"
+                        label="Hora de la reserva"
+                        isRequired={true}
+                        className="w-full"
+                        disabledKeys={editFullSchedules}
+                      >
+                        {renderScheduleOptions()}
+                      </Select>
+                    )}
                   />
                   <Controller
                     control={editControl}
@@ -633,8 +586,6 @@ function BookingsDetails() {
           )}
         </ModalContent>
       </Modal>
-    </>
+    </div>
   );
 }
-
-export default BookingsDetails;

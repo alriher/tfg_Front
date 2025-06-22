@@ -5,8 +5,17 @@ import { useAuth } from "../providers/AuthProvider";
 import { getErrorMessage } from "../services/ErrorServices";
 import { updateUserProfile, changeUserPassword } from "../services/UserService";
 import { CalendarDate, today, parseDate } from "@internationalized/date";
-import { confirmPasswordValidation, isPhone9DigitsValidation, isNotTooOldValidation, isBeforeValidation, isEmailValidation, passwordHasLowercaseValidation, passwordHasNumberValidation, passwordHasSpecialCharacterValidation, passwordHasUppercaseValidation } from "../services/ValidationService";
-
+import {
+  confirmPasswordValidation,
+  isPhone9DigitsValidation,
+  isNotTooOldValidation,
+  isBeforeValidation,
+  isEmailValidation,
+  passwordHasLowercaseValidation,
+  passwordHasNumberValidation,
+  passwordHasSpecialCharacterValidation,
+  passwordHasUppercaseValidation,
+} from "../services/ValidationService";
 
 interface IUserProfileFormInput {
   email: string;
@@ -34,8 +43,9 @@ const ProfileForm = () => {
       lastName: user?.lastName || "",
       phone: user?.phone || "",
       email: user?.email || "",
+      username: user?.username || "",
       birthdate: user?.birthdate ? parseDate(user.birthdate) : undefined,
-      address: user?.address || ""
+      address: user?.address || "",
     },
   });
 
@@ -49,9 +59,15 @@ const ProfileForm = () => {
       setSuccess(false);
       // Convertir birthdate a string YYYY-MM-DD si existe
       const birthdateStr = data.birthdate
-        ? `${data.birthdate.year}-${String(data.birthdate.month).padStart(2, "0")}-${String(data.birthdate.day).padStart(2, "0")}`
+        ? `${data.birthdate.year}-${String(data.birthdate.month).padStart(
+            2,
+            "0"
+          )}-${String(data.birthdate.day).padStart(2, "0")}`
         : undefined;
-      const response = await updateUserProfile(user.id, { ...data, birthdate: birthdateStr });
+      const response = await updateUserProfile(user.id, {
+        ...data,
+        birthdate: birthdateStr,
+      });
       setSuccess(true);
       if (response && response.user) {
         setUser && setUser(response.user);
@@ -94,18 +110,27 @@ const ProfileForm = () => {
     setPasswordSuccess(false);
     setPasswordErrorMsg("");
     if (data.newPassword !== data.confirmNewPassword) {
-      setPasswordError("confirmNewPassword", { type: "confirmPasswordValidation", message: "Las contraseñas no coinciden" });
+      setPasswordError("confirmNewPassword", {
+        type: "confirmPasswordValidation",
+        message: "Las contraseñas no coinciden",
+      });
       setPasswordValue("newPassword", "", { shouldValidate: true });
       setPasswordValue("confirmNewPassword", "", { shouldValidate: true });
       return;
     }
     if (!user) return;
     try {
-      await changeUserPassword(Number(user.id), data.currentPassword, data.newPassword);
+      await changeUserPassword(
+        Number(user.id),
+        data.currentPassword,
+        data.newPassword
+      );
       setPasswordSuccess(true);
       resetPasswordForm();
     } catch (error: any) {
-      setPasswordErrorMsg(error?.response?.data?.message || "Error al cambiar la contraseña");
+      setPasswordErrorMsg(
+        error?.response?.data?.message || "Error al cambiar la contraseña"
+      );
       setPasswordValue("currentPassword", "", { shouldValidate: true });
       setPasswordValue("newPassword", "", { shouldValidate: true });
       setPasswordValue("confirmNewPassword", "", { shouldValidate: true });
@@ -179,8 +204,9 @@ const ProfileForm = () => {
           rules={{
             required: false,
             validate: {
-              isPhone9DigitsValidation: (value) => isPhone9DigitsValidation(value)
-            }
+              isPhone9DigitsValidation: (value) =>
+                isPhone9DigitsValidation(value),
+            },
           }}
           render={({ field }) => (
             <Input
@@ -191,41 +217,43 @@ const ProfileForm = () => {
               type="text"
               className="md:col-span-2"
               isInvalid={!!errors.phone}
-              errorMessage={getErrorMessage(errors.phone?.type, { field: "teléfono" })}
-            />
-          )}
-        />
-        <Controller
-          control={control}
-          name="birthdate"
-          rules={{
-            required: true,
-            validate: {
-              isBefore: (value) =>
-                isBeforeValidation(
-                  value,
-                  today("Europe/Madrid").add({ years: -18 })
-                ),
-              isNotTooOld: (value) =>
-                isNotTooOldValidation(value),
-            },
-          }}
-          render={({ field }) => (
-            <DatePicker
-              {...field}
-              isInvalid={!!errors.birthdate}
-              maxValue={today("Europe/Madrid")}
-              minValue={today("Europe/Madrid").add({ years: -100 })}
-              hideTimeZone
-              labelPlacement="outside"
-              className="md:col-span-2"
-              label="Fecha de nacimiento"
-              errorMessage={getErrorMessage(errors.birthdate?.type, {
-                field: "fecha de nacimiento",
+              errorMessage={getErrorMessage(errors.phone?.type, {
+                field: "teléfono",
               })}
             />
           )}
         />
+          <Controller
+            control={control}
+            name="birthdate"
+            rules={{
+              required: true,
+              validate: {
+                isBefore: (value) =>
+                  isBeforeValidation(
+                    value,
+                    today("Europe/Madrid").add({ years: -18 })
+                  ),
+                isNotTooOld: (value) => isNotTooOldValidation(value),
+              },
+            }}
+            render={({ field }) => (
+              <DatePicker
+                {...field}
+                isInvalid={!!errors.birthdate}
+                maxValue={today("Europe/Madrid")}
+                minValue={today("Europe/Madrid").add({ years: -100 })}
+                hideTimeZone
+                labelPlacement="outside"
+                className="md:col-span-2"
+                label="Fecha de nacimiento"
+                errorMessage={getErrorMessage(errors.birthdate?.type, {
+                  field: "fecha de nacimiento",
+                })}
+              />
+            )}
+          />
+
         <Controller
           control={control}
           name="address"
@@ -242,6 +270,20 @@ const ProfileForm = () => {
               errorMessage={getErrorMessage(errors.address?.type, {
                 field: "dirección",
               })}
+            />
+          )}
+        />
+        <Controller
+          control={control}
+          name="username"
+          render={({ field }) => (
+            <Input
+              {...field}
+              label="Nombre de usuario"
+              labelPlacement="outside"
+              placeholder="Nombre de usuario"
+              className="md:col-span-2"
+              disabled
             />
           )}
         />
@@ -296,7 +338,10 @@ const ProfileForm = () => {
         <span>Contraseña</span>
         <div className="border-r-1 h-full w-[1px] border-gray-300 hidden md:block"></div>
       </div>
-      <form className="grid md:grid-cols-2 gap-x-4 gap-y-8 md:col-span-2" onSubmit={handlePasswordSubmit(onPasswordSubmit)}>
+      <form
+        className="grid md:grid-cols-2 gap-x-4 gap-y-8 md:col-span-2"
+        onSubmit={handlePasswordSubmit(onPasswordSubmit)}
+      >
         <Controller
           control={controlPassword}
           name="currentPassword"
@@ -310,7 +355,9 @@ const ProfileForm = () => {
               type="password"
               className="md:col-span-2"
               isInvalid={!!errorsPassword.currentPassword}
-              errorMessage={errorsPassword.currentPassword && "Campo obligatorio"}
+              errorMessage={
+                errorsPassword.currentPassword && "Campo obligatorio"
+              }
             />
           )}
         />
@@ -347,9 +394,13 @@ const ProfileForm = () => {
                   onClick={toggleVisibility}
                 >
                   {isVisible ? (
-                    <span className="text-default-400 pointer-events-none size-6">👁️‍🗨️</span>
+                    <span className="text-default-400 pointer-events-none size-6">
+                      👁️‍🗨️
+                    </span>
                   ) : (
-                    <span className="text-default-400 pointer-events-none size-6">👁️</span>
+                    <span className="text-default-400 pointer-events-none size-6">
+                      👁️
+                    </span>
                   )}
                 </button>
               }
@@ -362,7 +413,8 @@ const ProfileForm = () => {
           rules={{
             required: true,
             validate: {
-              confirmPasswordValidation: (confirmPassword) => confirmPasswordValidation(newPassword, confirmPassword),
+              confirmPasswordValidation: (confirmPassword) =>
+                confirmPasswordValidation(newPassword, confirmPassword),
             },
           }}
           render={({ field }) => (
@@ -374,9 +426,12 @@ const ProfileForm = () => {
               type={isVisible2 ? "text" : "password"}
               className="md:col-span-2"
               isInvalid={!!errorsPassword.confirmNewPassword}
-              errorMessage={getErrorMessage(errorsPassword.confirmNewPassword?.type, {
-                field: "confirmar contraseña",
-              })}
+              errorMessage={getErrorMessage(
+                errorsPassword.confirmNewPassword?.type,
+                {
+                  field: "confirmar contraseña",
+                }
+              )}
               endContent={
                 <button
                   className="focus:outline-none"
@@ -384,9 +439,13 @@ const ProfileForm = () => {
                   onClick={toggleVisibility2}
                 >
                   {isVisible2 ? (
-                    <span className="text-default-400 pointer-events-none size-6">👁️‍🗨️</span>
+                    <span className="text-default-400 pointer-events-none size-6">
+                      👁️‍🗨️
+                    </span>
                   ) : (
-                    <span className="text-default-400 pointer-events-none size-6">👁️</span>
+                    <span className="text-default-400 pointer-events-none size-6">
+                      👁️
+                    </span>
                   )}
                 </button>
               }

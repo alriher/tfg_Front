@@ -10,7 +10,7 @@ import Bookings from "./views/Bookings";
 import Profile from "./views/Profile";
 import AdminUsers from "./views/AdminUsers";
 import AdminSpaces from "./views/AdminSpaces";
-import AdminBookings from "./views/AdminBookings";
+import AdminUserBookings from "./views/AdminUserBookings";
 import { RequireAdmin } from "./services/AdminServices";
 import { RequireSpaceAdmin, RequireSpaceAdminOrAdmin } from "./services/AdminSpaceServices";
 import CreateSpace from "./views/CreateSpace";
@@ -58,10 +58,10 @@ function App() {
           }
         />
         <Route
-          path="/admin/bookings"
+          path="/admin/users/:userId/bookings"
           element={
             <RequireAdmin>
-              <AdminBookings />
+              <AdminUserBookings />
             </RequireAdmin>
           }
         />

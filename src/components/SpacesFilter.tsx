@@ -19,6 +19,7 @@ interface SpacesFilterProps {
   onSubmit: (e: React.FormEvent) => void;
   filterUsername?: string;
   setFilterUsername?: (value: string) => void;
+  expandNameInput?: boolean;
 }
 
 export default function SpacesFilter({
@@ -31,6 +32,7 @@ export default function SpacesFilter({
   onSubmit,
   filterUsername,
   setFilterUsername,
+  expandNameInput = false,
 }: SpacesFilterProps) {
   const [selectedProvince, setSelectedProvince] = useState("");
 
@@ -107,6 +109,7 @@ export default function SpacesFilter({
         placeholder="Nombre del espacio"
         value={filterName}
         onValueChange={setFilterName}
+        className={expandNameInput ? "md:col-span-2" : undefined}
       />
       {typeof filterUsername === "string" && setFilterUsername && (
         <Input

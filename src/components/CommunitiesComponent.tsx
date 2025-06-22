@@ -123,18 +123,19 @@ function CommunitiesComponent() {
 
   return (
     <>
-    <div className="mt-4">
-<SpacesFilter
-        filterProvincia={filterProvincia}
-        setFilterProvincia={setFilterProvincia}
-        filterLocalidad={filterLocalidad}
-        setFilterLocalidad={setFilterLocalidad}
-        filterName={filterName}
-        setFilterName={setFilterName}
-        onSubmit={handleFilter}
-      />
-    </div>
-      
+      <div className="mt-4">
+        <SpacesFilter
+          filterProvincia={filterProvincia}
+          setFilterProvincia={setFilterProvincia}
+          filterLocalidad={filterLocalidad}
+          setFilterLocalidad={setFilterLocalidad}
+          filterName={filterName}
+          setFilterName={setFilterName}
+          onSubmit={handleFilter}
+          expandNameInput={true}
+        />
+      </div>
+
       <div className="px-6 container m-auto grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-4">
         {spaces.map((space) => (
           <SpaceCard key={space.id} space={space} />

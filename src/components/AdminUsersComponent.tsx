@@ -101,6 +101,10 @@ export default function AdminUsersComponent() {
     navigate(`/admin/users/${userId}/spaces`);
   }
 
+  function handleViewBookings(userId: string) {
+    navigate(`/admin/users/${userId}/bookings`);
+  }
+
   return (
     <div className="flex flex-col gap-4">
       <div className="container mx-auto bg-white rounded-xl">
@@ -149,6 +153,12 @@ export default function AdminUsersComponent() {
                       onClick={() => handleViewSpaces(user.id)}
                     >
                       Ver espacios
+                    </button>
+                    <button
+                      className="px-3 py-1 rounded text-xs font-semibold border border-black text-gray"
+                      onClick={() => handleViewBookings(user.id)}
+                    >
+                      Ver reservas
                     </button>
                     <button
                       className="px-3 py-1 rounded text-xs font-semibold border border-danger text-danger"
