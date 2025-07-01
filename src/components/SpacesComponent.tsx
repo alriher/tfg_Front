@@ -31,9 +31,14 @@ function SpacesComponent() {
   const [page, setPage] = useState(1);
   const [pageSize] = useState(15);
   const [total, setTotal] = useState(0);
+  // Estados "reales" para la búsqueda
   const [filterProvincia, setFilterProvincia] = useState("");
   const [filterLocalidad, setFilterLocalidad] = useState("");
   const [filterName, setFilterName] = useState("");
+  // Estados locales para los inputs
+  const [inputProvincia, setInputProvincia] = useState("");
+  const [inputLocalidad, setInputLocalidad] = useState("");
+  const [inputName, setInputName] = useState("");
 
   const fetchSpaces = () => {
     getSpaces(page, pageSize, {
@@ -49,19 +54,22 @@ function SpacesComponent() {
   useEffect(() => {
     fetchSpaces();
     // eslint-disable-next-line
-  }, [page, pageSize]);
+  }, [page, pageSize, filterProvincia, filterLocalidad, filterName]);
 
   const handleFilter = (e: React.FormEvent) => {
     e.preventDefault();
-    setPage(1);
-    getSpaces(1, pageSize, {
-      provincia: filterProvincia,
-      localidad: filterLocalidad,
-      name: filterName,
-    }).then((res) => {
-      setSpaces(res.spaces);
-      setTotal(res.total);
-    });
+    // Si hay algún cambio en los filtros o la página, actualiza y fuerza la búsqueda
+    if (
+      filterProvincia !== inputProvincia ||
+      filterLocalidad !== inputLocalidad ||
+      filterName !== inputName ||
+      page !== 1
+    ) {
+      setPage(1);
+      setFilterProvincia(inputProvincia);
+      setFilterLocalidad(inputLocalidad);
+      setFilterName(inputName);
+    }
   };
 
   const totalPages = Math.ceil(total / pageSize);
@@ -124,16 +132,16 @@ function SpacesComponent() {
   return (
     <>
       <div className="mt-4">
-        <SpacesFilter
-          filterProvincia={filterProvincia}
-          setFilterProvincia={setFilterProvincia}
-          filterLocalidad={filterLocalidad}
-          setFilterLocalidad={setFilterLocalidad}
-          filterName={filterName}
-          setFilterName={setFilterName}
-          onSubmit={handleFilter}
-          expandNameInput={true}
-        />
+      <SpacesFilter
+        filterProvincia={inputProvincia}
+        setFilterProvincia={setInputProvincia}
+        filterLocalidad={inputLocalidad}
+        setFilterLocalidad={setInputLocalidad}
+        filterName={inputName}
+        setFilterName={setInputName}
+        onSubmit={handleFilter}
+        expandNameInput={true}
+      />
       </div>
 
       <div className="px-6 container m-auto grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-4">

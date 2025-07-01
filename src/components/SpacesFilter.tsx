@@ -119,6 +119,7 @@ export default function SpacesFilter({
         />
       )}
       <Button
+        type="submit"
         className="hidden lg:inline-flex w-auto"
         radius="full"
         isIconOnly
@@ -128,6 +129,7 @@ export default function SpacesFilter({
         <SearchIcon className="size-4" />
       </Button>
       <Button
+        type="submit"
         className="md:col-span-2 inline-flex lg:hidden"
         endContent={<SearchIcon className="size-4" />}
         color="primary"
