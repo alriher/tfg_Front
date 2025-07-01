@@ -2,7 +2,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { ISpace } from "../interfaces/space";
 import { IBooking } from "../interfaces/booking";
 import { useState, useEffect, useRef } from "react";
-import { getSpaceById } from "../services/CommunitiesService";
+import { getSpaceById } from "../services/SpacesService.tsx";
 import {
   createBooking,
   getBookingsBySpaceIdAndDate,

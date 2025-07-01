@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import SpaceCard from "./SpaceCard";
 import { ISpace } from "../interfaces/space";
-import { getSpaces, getSpaceById } from "../services/CommunitiesService";
+import { getSpaces, getSpaceById } from "../services/SpacesService";
 import {
   updateSpace,
   deleteSpace,

@@ -5,7 +5,7 @@ import { useAuth } from "../providers/AuthProvider";
 import { Pagination, PaginationItemType } from "@nextui-org/react";
 import { IBooking } from "../interfaces/booking";
 import SpaceCard from "../components/SpaceCard";
-import { getSpaceById } from "../services/CommunitiesService";
+import { getSpaceById } from "../services/SpacesService";
 import {
   Modal,
   ModalContent,

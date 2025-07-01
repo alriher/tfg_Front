@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import SpaceCard from "./SpaceCard";
 import { ISpace } from "../interfaces/space";
-import { getSpaces } from "../services/CommunitiesService";
+import { getSpaces } from "../services/SpacesService";
 import { Pagination, PaginationItemType } from "@nextui-org/react";
 import SpacesFilter from "./SpacesFilter";
 
@@ -26,7 +26,7 @@ const ChevronIcon = (props: any) => (
   </svg>
 );
 
-function CommunitiesComponent() {
+function SpacesComponent() {
   const [spaces, setSpaces] = useState<ISpace[]>([]);
   const [page, setPage] = useState(1);
   const [pageSize] = useState(15);
@@ -159,4 +159,4 @@ function CommunitiesComponent() {
   );
 }
 
-export default CommunitiesComponent;
+export default SpacesComponent;
