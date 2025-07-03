@@ -48,7 +48,7 @@ export default function EntryDateInput({
           hideTimeZone
           isRequired={true}
           className="w-full"
-          label="Fecha y hora de entrada"
+          label="Fecha de entrada"
         />
       )}
     />

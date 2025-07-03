@@ -78,7 +78,7 @@ const LoginForm = () => {
                   {...field}
                   type="email"
                   label="Email"
-                  placeholder="Enter your email"
+                  placeholder="Introduce tu email"
                   isInvalid={!!errors.email}
                   errorMessage={getErrorMessage(errors.email?.type, {
                     field: "email",

@@ -263,7 +263,7 @@ export default function SpaceDetailsComponent() {
                       minValue={today("Europe/Madrid")}
                       hideTimeZone
                       isRequired={true}
-                      label="Fecha y hora de entrada"
+                      label="Fecha de entrada"
                       onBlur={() => {
                         trigger("entryDate"); // <-- fuerza validación al salir del campo
                         loadBookingsForDate(field.value);

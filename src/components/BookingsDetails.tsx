@@ -353,7 +353,7 @@ function BookingsDetails() {
   return (
     <>
       <h1 className="flex justify-center text-2xl font-bold mb-4">
-        Reservas del espacio
+        Tus reservas
       </h1>
       <div className="px-6 container m-auto grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-4">
         {bookings.length === 0 ? (

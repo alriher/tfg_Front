@@ -33,70 +33,14 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/bookings" element={<Bookings />} />
         <Route path="/profile" element={<Profile />} />
-        <Route
-          path="/admin/users"
-          element={
-            <RequireAdmin>
-              <AdminUsers />
-            </RequireAdmin>
-          }
-        />
-        <Route
-          path="/admin/spaces"
-          element={
-            <RequireAdmin>
-              <AdminSpaces />
-            </RequireAdmin>
-          }
-        />
-        <Route
-          path="admin/users/:userId/spaces"
-          element={
-            <RequireAdmin>
-              <AdminUserSpaces />
-            </RequireAdmin>
-          }
-        />
-        <Route
-          path="/admin/users/:userId/bookings"
-          element={
-            <RequireAdmin>
-              <AdminUserBookings />
-            </RequireAdmin>
-          }
-        />
-        <Route
-          path="/space-admin/create-space"
-          element={
-            <RequireSpaceAdmin>
-              <CreateSpace />
-            </RequireSpaceAdmin>
-          }
-        />
-        <Route
-          path="/space-admin/my-spaces"
-          element={
-            <RequireSpaceAdmin>
-              <MySpaces />
-            </RequireSpaceAdmin>
-          }
-        />
-        <Route
-          path="/space-admin/space-bookings"
-          element={
-            <RequireSpaceAdmin>
-              <MySpaces />
-            </RequireSpaceAdmin>
-          }
-        />
-        <Route
-          path="/spaces/:spaceId/bookings"
-          element={
-            <RequireSpaceAdminOrAdmin>
-              <SpaceBookingsDetails />
-            </RequireSpaceAdminOrAdmin>
-          }
-        />
+        <Route path="/admin/users" element={<RequireAdmin><AdminUsers /></RequireAdmin>}/>
+        <Route path="/admin/spaces" element={<RequireAdmin><AdminSpaces /></RequireAdmin>}/>
+        <Route path="/admin/users/:userId/spaces" element={<RequireAdmin><AdminUserSpaces /></RequireAdmin>}/>
+        <Route path="/admin/users/:userId/bookings" element={<RequireAdmin><AdminUserBookings /></RequireAdmin>}/>
+        <Route path="/space-admin/create-space" element={<RequireSpaceAdmin><CreateSpace /></RequireSpaceAdmin>}/>
+        <Route path="/space-admin/my-spaces" element={<RequireSpaceAdmin><MySpaces /></RequireSpaceAdmin>}/>
+        <Route path="/space-admin/space-bookings" element={<RequireSpaceAdmin><MySpaces /></RequireSpaceAdmin>}/>
+        <Route path="/spaces/:spaceId/bookings" element={<RequireSpaceAdminOrAdmin><SpaceBookingsDetails /></RequireSpaceAdminOrAdmin>}/>
       </Routes>
     </NextUIProvider>
   );
@@ -104,12 +48,4 @@ function App() {
 
 export default App;
 
-/* 
-          <Route path="/logout" element={<LogoutPage />} />
-          <Route path="/token" element={<RequireAuth><TokenPage /></RequireAuth>} />
-          <Route path="/bookings" element={<RequireAuth><BookingsPage /></RequireAuth>} />
-          <Route path="/bookings/:id" element={<RequireAuth><BookingDetailPage /></RequireAuth>} />
-          <Route path="/spaces" element={<RequireAuth><SpacesPage /></RequireAuth>} />
-          <Route path="/spaces/:id" element={<RequireAuth><SpaceDetailPage /></RequireAuth>} />
-          <Route path="/users" element={<RequireAuth><UsersPage /></RequireAuth>} />
-          <Route path="/users/:id" element={<RequireAuth><UserDetailPage /></RequireAuth>} /> */
+
