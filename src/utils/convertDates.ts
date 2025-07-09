@@ -8,10 +8,14 @@ export function convertirFechasAUTC(obj: any): any {
     for (const key in obj) {
       const value = obj[key];
       if (value instanceof Date) {
+        console.log(`Converting Date to UTC ISO for key: ${key}`);
         nuevo[key] = convertDateToUTCISO(value.toISOString());
       } else if (typeof value === "string" && isISODateString(value)) {
+        console.log(`Converting ISO date string to UTC ISO for key: ${key}`);
         nuevo[key] = convertDateToUTCISO(value);
       } else {
+        console.log(`Recursively converting key: ${key}`);
+         // Recursivamente convertir objetos anidados
         nuevo[key] = convertirFechasAUTC(value);
       }
     }

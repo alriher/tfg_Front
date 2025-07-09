@@ -28,6 +28,7 @@ import { schedule } from "../assets/schedules";
 import useDateFormatter from "../services/DateFormatterService";
 import moment from "moment";
 import SpaceMap from "./SpaceMap";
+import { combineDayAndHourIntoUTC } from "../utils/utils.ts";
 interface ISpaceFormInput {
   entryDate: CalendarDate;
   schedule: string;
@@ -150,8 +151,9 @@ export default function SpaceDetailsComponent() {
         2,
         "0"
       )}-${String(entryDate.day).padStart(2, "0")}`;
-      const dateStart = `${dateStr} ${startTime}:00`;
-      const dateEnd = `${dateStr} ${endTime}:00`;
+
+      const dateStart = combineDayAndHourIntoUTC(dateStr, `${startTime}:00`)
+      const dateEnd = combineDayAndHourIntoUTC(dateStr, `${endTime}:00`)
 
       console.log("DATE START" + dateStart);
       console.log("DATE END" + dateEnd);

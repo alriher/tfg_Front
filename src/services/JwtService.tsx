@@ -32,6 +32,7 @@ api.interceptors.request.use(
 
 api.interceptors.request.use(config => {
   if (config.data) {
+    console.log("Converting dates to UTC in request data");
     config.data = convertirFechasAUTC(config.data);
   }
   return config;
@@ -39,6 +40,7 @@ api.interceptors.request.use(config => {
 
 api.interceptors.response.use(response => {
   if (response.data) {
+    console.log("Converting dates to Date objects in response data");
     response.data = convertirFechasADate(response.data);
   }
   return response;
