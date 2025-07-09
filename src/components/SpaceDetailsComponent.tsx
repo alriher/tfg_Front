@@ -170,10 +170,10 @@ export default function SpaceDetailsComponent() {
         dateStart,
         dateEnd,
         Number(data.assistants)
-      );
-
-      alert("Reserva creada con éxito");
-      navigate("/bookings");
+      ).then(() => {
+        alert("Reserva creada con éxito");
+        navigate("/bookings");
+      });
     } catch (err: any) {
       console.error(err);
       alert(err.response?.data?.message || "Error al crear la reserva.");
