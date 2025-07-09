@@ -20,7 +20,6 @@ export const convertDates = <T>(input: T, timeZone = 'Europe/Madrid'): T => {
     if (value instanceof Date || isIsoDate(value)) {
       
       return new Intl.DateTimeFormat('es-ES', {
-
         timeZone,
         dateStyle: 'medium',
         timeStyle: 'short',

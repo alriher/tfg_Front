@@ -109,8 +109,8 @@ export default function SpaceDetailsComponent() {
       const reservas = await getBookingsBySpaceIdAndDate(space.id, dateStr);
       const assistantsPerHour: { [key: string]: number } = {};
       reservas.forEach((r: IBooking) => {
-        const start = moment(r.dateStart).format("HH:mm");
-        const end = moment(r.dateEnd).format("HH:mm");
+        const start = moment(r.dateStart).locale("es").format("HH:mm");
+        const end = moment(r.dateEnd).locale("es").format("HH:mm");
         const scheduleValue = `${start}-${end}`;
         const scheduleKey = schedule.find(
           (s) => s.value === scheduleValue

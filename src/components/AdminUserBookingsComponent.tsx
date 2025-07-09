@@ -96,8 +96,8 @@ export default function AdminUserBookingsComponent() {
       const assistantsPerHour: { [key: string]: number } = {};
       reservas.forEach((r: IBooking) => {
         if (r.id === bookingToEdit.id) return;
-        const start = moment(r.dateStart).format("HH:mm");
-        const end = moment(r.dateEnd).format("HH:mm");
+        const start = moment(r.dateStart).locale("es").format("HH:mm");
+        const end = moment(r.dateEnd).locale("es").format("HH:mm");
         const scheduleValue = `${start}-${end}`;
         const scheduleKey = schedule.find((s) => s.value === scheduleValue)?.key;
         if (scheduleKey) {
@@ -203,7 +203,7 @@ export default function AdminUserBookingsComponent() {
   // Handler para abrir el modal de edición
   const handleEdit = (booking: IBooking) => {
     setBookingToEdit(booking);
-    const start = moment(booking.dateStart);
+    const start = moment(booking.dateStart).locale("es");
     setEditValue(
       "entryDate",
       new CalendarDate(start.year(), start.month() + 1, start.date())
@@ -431,10 +431,10 @@ export default function AdminUserBookingsComponent() {
                       Espacio: <b>{bookingToCancel.Space?.name || bookingToCancel.spaceId?.name}</b>
                     </p>
                     <p className="text-xs text-default-600 mt-1">
-                      Fecha: {moment(bookingToCancel.dateStart).format("DD/MM/YYYY")}
+                      Fecha: {moment(bookingToCancel.dateStart).locale("es").format("DD/MM/YYYY")}
                     </p>
                     <p className="text-xs text-default-600 mt-1">
-                      Hora: {moment(bookingToCancel.dateStart).format("HH:mm")} - {moment(bookingToCancel.dateEnd).format("HH:mm")}
+                      Hora: {moment(bookingToCancel.dateStart).locale("es").format("HH:mm")} - {moment(bookingToCancel.dateEnd).locale("es").format("HH:mm")}
                     </p>
                     <p className="text-xs text-default-600 mt-1">
                       Asistentes: {bookingToCancel.assistants}

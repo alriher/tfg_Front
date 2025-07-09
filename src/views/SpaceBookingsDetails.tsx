@@ -134,8 +134,8 @@ export default function SpaceBookingsDetails() {
       reservas.forEach((r: IBooking) => {
         // No contar la propia reserva al editar
         if (r.id === bookingToEdit.id) return;
-        const start = moment(r.dateStart).format("HH:mm");
-        const end = moment(r.dateEnd).format("HH:mm");
+        const start = moment(r.dateStart).locale("es").format("HH:mm");
+        const end = moment(r.dateEnd).locale("es").format("HH:mm");
         const scheduleValue = `${start}-${end}`;
         const scheduleKey = schedule.find(
           (s) => s.value === scheduleValue
@@ -215,7 +215,7 @@ export default function SpaceBookingsDetails() {
   // Handler para abrir el modal de edición
   const handleEdit = (booking: IBooking) => {
     setBookingToEdit(booking);
-    const start = moment(booking.dateStart);
+    const start = moment(booking.dateStart).locale("es");
     setEditValue(
       "entryDate",
       new CalendarDate(start.year(), start.month() + 1, start.date())
