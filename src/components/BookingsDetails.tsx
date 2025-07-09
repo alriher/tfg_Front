@@ -33,6 +33,7 @@ import {
   isBeforeValidation,
 } from "../services/ValidationService";
 import { getErrorMessage } from "../services/ErrorServices";
+import { combineDayAndHourIntoUTC } from "../utils/utils";
 
 const ChevronIcon = (props: any) => (
   <svg
@@ -251,8 +252,11 @@ function BookingsDetails() {
         2,
         "0"
       )}-${String(entryDate.day).padStart(2, "0")}`;
-      const dateStart = `${dateStr} ${startTime}:00`;
-      const dateEnd = `${dateStr} ${endTime}:00`;
+      // const dateStart = `${dateStr} ${startTime}:00`;
+      // const dateEnd = `${dateStr} ${endTime}:00`;
+      const dateStart = combineDayAndHourIntoUTC(dateStr, `${startTime}:00`)
+      const dateEnd = combineDayAndHourIntoUTC(dateStr, `${endTime}:00`);
+      
       await updateBooking(
         bookingToEdit.id,
         dateStart,

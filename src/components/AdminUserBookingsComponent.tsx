@@ -28,6 +28,7 @@ import { isAfterOrEqualToday, isBeforeValidation } from "../services/ValidationS
 import { getErrorMessage } from "../services/ErrorServices";
 import moment from "moment";
 import SpaceCard from "./SpaceCard";
+import { combineDayAndHourIntoUTC } from "../utils/utils";
 
 export default function AdminUserBookingsComponent() {
   const { userId } = useParams();
@@ -232,8 +233,11 @@ export default function AdminUserBookingsComponent() {
         2,
         "0"
       )}-${String(entryDate.day).padStart(2, "0")}`;
-      const dateStart = `${dateStr} ${startTime}:00`;
-      const dateEnd = `${dateStr} ${endTime}:00`;
+      // const dateStart = `${dateStr} ${startTime}:00`;
+      // const dateEnd = `${dateStr} ${endTime}:00`;
+      const dateStart = combineDayAndHourIntoUTC(dateStr, `${startTime}:00`)
+      const dateEnd = combineDayAndHourIntoUTC(dateStr, `${endTime}:00`);
+      
       await updateBooking(
         bookingToEdit.id,
         dateStart,
