@@ -1,7 +1,7 @@
-import moment from "moment";
+import moment from "moment-timezone";
 
 export function convertDateToUTCISO(date: string): string {
-  return moment(date).utc().toISOString();
+  return moment.tz(date, 'Europe/Madrid').utc().toISOString();
 }
 
 export function formatDateToLocal(date: string): Date {
