@@ -46,8 +46,13 @@ function SpacesComponent() {
       localidad: filterLocalidad,
       name: filterName,
     }).then((res) => {
-      setSpaces(Array.isArray(res.spaces) ? res.spaces : []);
-      setTotal(res.total || 0);
+      // Protección extra: si res no existe o no tiene spaces, forzamos array vacío
+      const safeSpaces = res && Array.isArray(res.spaces) ? res.spaces : [];
+      setSpaces(safeSpaces);
+      setTotal(res && typeof res.total === 'number' ? res.total : 0);
+    }).catch(() => {
+      setSpaces([]);
+      setTotal(0);
     });
   };
 
