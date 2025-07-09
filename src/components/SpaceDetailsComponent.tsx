@@ -236,7 +236,7 @@ export default function SpaceDetailsComponent() {
                     required: true,
                     validate: {
                       isAfterNow: isAfterOrEqualToday,
-                      isBefore: (value) =>
+                      isBeforeBookings: (value) =>
                         isBeforeValidation(
                           value,
                           today("Europe/Madrid").add({ months: 1 })

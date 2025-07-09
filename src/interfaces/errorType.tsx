@@ -3,6 +3,7 @@ export enum ErrorTypes {
   login400 = "LOGIN_400",
   isAfterNow = "IS_AFTER_NOW",
   isBefore = "IS_BEFORE",
+  isBeforeBookings = "IS_BEFORE_BOOKINGS",
   isEmailValidation = "IS_EMAIL",
   passwordHasNumberValidation = "HAS_NUMBER",
   passwordHasUppercaseValidation = "HAS_UPPERCASE",

@@ -3,6 +3,7 @@
   "LOGIN_400": "Email o contraseña incorrectos",
   "IS_AFTER_NOW": "La fecha debe ser igual o posterior a la fecha actual",
   "IS_BEFORE": "El usuario debe ser mayor de edad",
+  "IS_BEFORE_BOOKINGS": "Solo se pueden reservar espacios con una antelación máxima de 1 mes",
   "MIN": "El campo {{field}} debe tener al menos {{min}} caracteres",
   "MAX": "El campo {{field}} debe tener como máximo {{max}} caracteres",
   "IS_EMAIL": "El campo {{field}} debe ser un email válido",
