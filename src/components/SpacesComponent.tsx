@@ -46,8 +46,8 @@ function SpacesComponent() {
       localidad: filterLocalidad,
       name: filterName,
     }).then((res) => {
-      setSpaces(res.spaces);
-      setTotal(res.total);
+      setSpaces(Array.isArray(res.spaces) ? res.spaces : []);
+      setTotal(res.total || 0);
     });
   };
 
@@ -145,9 +145,15 @@ function SpacesComponent() {
       </div>
 
       <div className="px-6 container m-auto grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-4">
-        {spaces.map((space) => (
-          <SpaceCard key={space.id} space={space} />
-        ))}
+        {spaces.length === 0 ? (
+          <div className="col-span-full text-center text-gray-500 py-12 text-lg">
+            No hay espacios creados actualmente.
+          </div>
+        ) : (
+          spaces.map((space) => (
+            <SpaceCard key={space.id} space={space} />
+          ))
+        )}
       </div>
       <div className="flex justify-center items-center gap-4 mt-4">
         <Pagination
