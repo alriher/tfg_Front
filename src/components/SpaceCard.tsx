@@ -1,6 +1,8 @@
 import { Card, CardBody, CardFooter, Image, Button } from "@nextui-org/react";
 import { ISpace } from "../interfaces/space";
 import { useNavigate } from "react-router-dom";
+import moment from "moment";
+import 'moment/locale/es'; // Asegúrate de importar el locale español
 
 export default function SpaceCard({ space, showButtons, onEdit, onCancel, onShowBookings, showBookingsButton, booking, adminView }: {
   space: ISpace,
@@ -68,15 +70,15 @@ export default function SpaceCard({ space, showButtons, onEdit, onCancel, onShow
           <>
             <p className="text-xs text-default-600 mt-1">
               {(() => {
-                const start = new Date(booking.dateStart);
-                const end = new Date(booking.dateEnd);
-                const day = start.getDate();
-                const month = start.getMonth() + 1;
-                const year = start.getFullYear();
-                const startHour = start.getHours().toString().padStart(2, '0');
-                const startMin = start.getMinutes().toString().padStart(2, '0');
-                const endHour = end.getHours().toString().padStart(2, '0');
-                const endMin = end.getMinutes().toString().padStart(2, '0');
+                const start = moment(booking.dateStart);
+                const end = moment(booking.dateEnd);
+                const day = start.day();
+                const month = start.month() + 1; // Los meses en moment.js son 0-indexed
+                const year = start.year();
+                const startHour = start.hours().toString().padStart(2, '0');
+                const startMin = start.minutes().toString().padStart(2, '0');
+                const endHour = end.hours().toString().padStart(2, '0');
+                const endMin = end.minutes().toString().padStart(2, '0');
                 return `${day}/${month}/${year}, ${startHour}:${startMin}-${endHour}:${endMin}`;
               })()}
             </p>
