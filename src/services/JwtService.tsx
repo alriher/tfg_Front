@@ -1,5 +1,5 @@
 import axios from "axios";
-import { convertDates } from "../utils/convertDates";
+import { convertirFechasADate, convertirFechasAUTC } from "../utils/convertDates";
 
 const BACKEND_URL = import.meta.env.VITE_BACK_URL;
 
@@ -30,13 +30,19 @@ api.interceptors.request.use(
   }
 );
 
-api.interceptors.response.use(
-  (response) => {
-    response.data = convertDates(response.data);
-    return response;
-  },
-  (error) => Promise.reject(error)
-);
+axios.interceptors.request.use(config => {
+  if (config.data) {
+    config.data = convertirFechasAUTC(config.data);
+  }
+  return config;
+});
+
+axios.interceptors.response.use(response => {
+  if (response.data) {
+    response.data = convertirFechasADate(response.data);
+  }
+  return response;
+});
 
 // Response Interceptor
 api.interceptors.response.use(

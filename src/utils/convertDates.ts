@@ -1,32 +1,44 @@
-// utils/convertDates.ts
-export const isIsoDate = (value: unknown): value is string => {
-  return (
-    typeof value === 'string' &&
-    /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:.\d+)?Z$/.test(value)
-  );
-};
+import { convertDateToUTCISO, formatDateToLocal } from './utils';
 
-export const convertDates = <T>(input: T, timeZone = 'Europe/Madrid'): T => {
-  const convert = (value: unknown): unknown => {
-    if (Array.isArray(value)) return value.map(convert);
-    if (value && typeof value === 'object') {
-      const newObj: Record<string, unknown> = {};
-      for (const key in value) {
-        newObj[key] = convert((value as Record<string, unknown>)[key]);
+export function convertirFechasAUTC(obj: any): any {
+  if (Array.isArray(obj)) {
+    return obj.map(convertirFechasAUTC);
+  } else if (obj !== null && typeof obj === "object") {
+    const nuevo: any = {};
+    for (const key in obj) {
+      const value = obj[key];
+      if (value instanceof Date) {
+        nuevo[key] = convertDateToUTCISO(value.toISOString());
+      } else if (typeof value === "string" && isISODateString(value)) {
+        nuevo[key] = convertDateToUTCISO(value);
+      } else {
+        nuevo[key] = convertirFechasAUTC(value);
       }
-      return newObj;
     }
+    return nuevo;
+  }
+  return obj;
+}
 
-    if (value instanceof Date || isIsoDate(value)) {
-      
-      return new Intl.DateTimeFormat('es-ES', {
-        timeZone,
-        dateStyle: 'medium',
-        timeStyle: 'short',
-      }).format(new Date(value));
+export function convertirFechasADate(obj: any): any {
+  if (Array.isArray(obj)) {
+    return obj.map(convertirFechasADate);
+  } else if (obj !== null && typeof obj === "object") {
+    const nuevo: any = {};
+    for (const key in obj) {
+      const value = obj[key];
+      if (typeof value === "string" && isISODateString(value)) {
+        nuevo[key] = formatDateToLocal(value);
+      } else {
+        nuevo[key] = convertirFechasADate(value);
+      }
     }
-    return value;
-  };
+    return nuevo;
+  }
+  return obj;
+}
 
-  return convert(input) as T;
-};
+// Helper para detectar strings ISO 8601 en formato UTC
+function isISODateString(value: string): boolean {
+  return /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(.\d+)?Z$/.test(value);
+}
