@@ -18,7 +18,6 @@ export default function MunicipalitiesSelectorInput({
   control,
   municipalities,
   handleSelectionChange,
-  register,
   isDependent,
   selectedProvince,
 }: MunicipalitySelectorInputProps) {

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import SpaceCard from "./SpaceCard";
 import { ISpace } from "../interfaces/space";
-import { getSpaces, getSpaceById } from "../services/SpacesService";
+import { getSpaces } from "../services/SpacesService";
 import {
   updateSpace,
   deleteSpace,
@@ -16,14 +16,7 @@ import {
   ModalBody,
   ModalFooter,
   Button,
-  Input,
-  Autocomplete,
-  AutocompleteItem,
 } from "@nextui-org/react";
-import { useNavigate } from "react-router-dom";
-import provinces from "../assets/provincias.json";
-import municipalities from "../assets/municipios.json";
-import SearchIcon from "./icons/SearchIcon";
 import SpacesFilter from "./SpacesFilter";
 
 const ChevronIcon = (props: any) => (
@@ -59,8 +52,6 @@ function AdminSpacesComponent() {
   const [filterUsername, setFilterUsername] = useState("");
   const [filterProvincia, setFilterProvincia] = useState("");
   const [filterLocalidad, setFilterLocalidad] = useState("");
-  const [selectedProvince, setSelectedProvince] = useState("");
-  const navigate = useNavigate();
 
   // Calculate total pages for pagination
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
@@ -200,12 +191,6 @@ function AdminSpacesComponent() {
   };
 
   // Utilidad para obtener el id de la provincia
-  const getProvinceId = (name: string) => {
-    const prov = provinces.find(
-      (p: any) => p.nombre.trim().toLowerCase() === name.trim().toLowerCase()
-    );
-    return prov ? prov.value : null;
-  };
 
   if (loading) return <div className="mt-4">Cargando espacios...</div>;
 
@@ -303,7 +288,6 @@ function AdminSpacesComponent() {
               <SpaceForm
                 initialValues={spaceToEdit}
                 onSubmit={handleEditSubmit}
-                submitLabel="Guardar cambios"
                 inModal
               />
             )}

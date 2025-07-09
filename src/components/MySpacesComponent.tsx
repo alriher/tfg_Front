@@ -3,8 +3,7 @@ import { getSpacesByUserId, deleteSpace } from "../services/AdminSpaceServices";
 import { useAuth } from "../providers/AuthProvider";
 import SpaceCard from "../components/SpaceCard";
 import { ISpace } from "../interfaces/space";
-import { Pagination, PaginationItemType, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure } from "@nextui-org/react";
-import { getBookingsBySpaceIdPaginated } from "../services/AdminSpaceServices";
+import { Pagination, PaginationItemType, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button } from "@nextui-org/react";
 import SpaceForm from "../components/SpaceForm";
 import { updateSpace, uploadImageToCloudinary} from "../services/AdminSpaceServices";
 import { useNavigate } from "react-router-dom";
@@ -230,7 +229,6 @@ export default function MySpacesComponent() {
               <SpaceForm
                 initialValues={spaceToEdit}
                 onSubmit={handleEditSubmit}
-                submitLabel="Guardar cambios"
                 inModal
               />
             )}

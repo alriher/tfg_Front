@@ -1,12 +1,11 @@
 import React from "react";
-import { Controller, set, SubmitHandler, useForm } from "react-hook-form";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { Button, Input, Link } from "@nextui-org/react";
 import EyeFilledIcon from "./EyeSlashFilledIcon";
 import EyeSlashFilledIcon from "./EyeSlashFilledIcon";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../providers/AuthProvider";
 import { getErrorMessage } from "../services/ErrorServices";
-import { cn } from "../utils/cn";
 import { isEmailValidation } from "../services/ValidationService";
 
 interface IUserFormInput {
@@ -25,7 +24,6 @@ const LoginForm = () => {
     control,
     setError,
   } = useForm<IUserFormInput>();
-  const [formError, setFormErrors] = React.useState<string>("");
   const onSubmit: SubmitHandler<IUserFormInput> = (data) =>
     login(data.email, data.password)
       .then(() => {
@@ -120,11 +118,6 @@ const LoginForm = () => {
                 />
               )}
             />
-          </div>
-          <div className={cn({ hidden: formError.length == 0 })}>
-            {formError.length != 0 ? (
-              <span className="text-danger">{getErrorMessage(formError)}</span>
-            ) : null}
           </div>
           <Button color="primary" className="font-semibold" type="submit">
             Iniciar Sesión

@@ -264,7 +264,6 @@ export default function AdminUserSpaces() {
               <SpaceForm
                 initialValues={spaceToEdit}
                 onSubmit={handleEditSubmit}
-                submitLabel="Guardar cambios"
                 inModal
               />
             )}

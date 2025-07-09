@@ -6,7 +6,6 @@ import { useAuth } from "../providers/AuthProvider";
 import { getErrorMessage } from "../services/ErrorServices";
 import EyeFilledIcon from "./EyeFilledIcon";
 import EyeSlashFilledIcon from "./EyeSlashFilledIcon";
-import { cn } from "../utils/cn";
 import { CalendarDate, today } from "@internationalized/date";
 import {
   confirmPasswordValidation,
@@ -50,7 +49,6 @@ const RegisterForm = () => {
   });
 
   const password = watch("password", "");
-  const [formError, setFormErrors] = React.useState<string>("");
   const onSubmit: SubmitHandler<IUserRegisterFormInput> = (data) =>
     register(
       data.email,
@@ -90,8 +88,6 @@ const RegisterForm = () => {
           setError("email", {
             type: "emailAlreadyExists",
           });
-        } else {
-          setFormErrors("register" + error.response.status);
         }
         setValue("password", "", { shouldValidate: true });
         setValue("confirmPassword", "", { shouldValidate: true });

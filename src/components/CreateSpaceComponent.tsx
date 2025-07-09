@@ -1,7 +1,6 @@
 import { useState, useRef } from "react";
 import {
   Button,
-  Divider,
   Input,
   Select,
   SelectItem,
@@ -22,7 +21,6 @@ export default function CreateSpaceComponent() {
   const [lat, setLat] = useState<string>("");
   const [lon, setLon] = useState<string>("");
   const [province, setProvince] = useState("");
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
@@ -72,7 +70,6 @@ export default function CreateSpaceComponent() {
       setError("Por favor, selecciona una imagen.");
       return;
     }
-    setLoading(true);
     try {
       // Subir imagen a Cloudinary
       const imageUrl = await uploadImageToCloudinary(imgFile);
@@ -94,8 +91,6 @@ export default function CreateSpaceComponent() {
       navigate("/space-admin/my-spaces");
     } catch (e: any) {
       setError("Error al crear el espacio. Inténtalo de nuevo.");
-    } finally {
-      setLoading(false);
     }
   };
 

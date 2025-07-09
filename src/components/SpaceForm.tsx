@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from "react";
 import {
-  Button,
   Input,
   Select,
   SelectItem,
@@ -11,19 +10,15 @@ import provinces from "../assets/provincias.json";
 import municipalities from "../assets/municipios.json";
 import SpaceMap from "../components/SpaceMap";
 import { getErrorMessage } from "../services/ErrorServices";
-import { uploadImageToCloudinary } from "../services/AdminSpaceServices";
 import { ISpace } from "../interfaces/space";
 
 interface SpaceFormProps {
   initialValues?: Partial<ISpace>;
   onSubmit: (data: any, imageFile: File | null, imagePreview: string | null) => Promise<void>;
-  loading?: boolean;
-  submitLabel?: string;
   inModal?: boolean;
-  onCancel?: () => void; // Nuevo: handler para cancelar
 }
 
-export default function SpaceForm({ initialValues = {}, onSubmit, loading, submitLabel = "Guardar", inModal = false, onCancel }: SpaceFormProps) {
+export default function SpaceForm({ initialValues = {}, onSubmit, inModal = false }: SpaceFormProps) {
   const [imgPreview, setImgPreview] = useState<string | null>(initialValues.img || null);
   const [imgFile, setImgFile] = useState<File | null>(null);
   const [lat, setLat] = useState<string>(initialValues.lat ? String(initialValues.lat) : "");

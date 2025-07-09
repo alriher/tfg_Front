@@ -39,7 +39,6 @@ export default function SpaceDetailsComponent() {
   const { id } = useParams();
   const { user } = useAuth();
   const [space, setSpace] = useState<ISpace | null>(null);
-  const [capacity, setCapacity] = useState<string[]>([]);
   const [fullSchedules, setFullSchedules] = useState<string[]>([]);
   const [maxAssistants, setMaxAssistants] = useState(1);
   const assistantsPerHourRef = useRef<{ [key: string]: number }>({});
@@ -76,9 +75,6 @@ export default function SpaceDetailsComponent() {
       getSpaceById(id).then((space) => {
         console.log("SPACE", space);
         setSpace(space);
-        setCapacity(
-          Array.from({ length: space.capacity }, (_, i) => String(i + 1))
-        );
       });
     }
   }, [id]);

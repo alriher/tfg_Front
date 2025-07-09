@@ -10,7 +10,6 @@ import {
   isPhone9DigitsValidation,
   isNotTooOldValidation,
   isBeforeValidation,
-  isEmailValidation,
   passwordHasLowercaseValidation,
   passwordHasNumberValidation,
   passwordHasSpecialCharacterValidation,
@@ -36,7 +35,6 @@ const ProfileForm = () => {
     handleSubmit,
     formState: { errors },
     control,
-    setError,
   } = useForm<IUserProfileFormInput>({
     defaultValues: {
       name: user?.name || "",
