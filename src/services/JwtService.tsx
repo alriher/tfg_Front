@@ -30,14 +30,14 @@ api.interceptors.request.use(
   }
 );
 
-axios.interceptors.request.use(config => {
+api.interceptors.request.use(config => {
   if (config.data) {
     config.data = convertirFechasAUTC(config.data);
   }
   return config;
 });
 
-axios.interceptors.response.use(response => {
+api.interceptors.response.use(response => {
   if (response.data) {
     response.data = convertirFechasADate(response.data);
   }
