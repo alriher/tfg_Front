@@ -14,7 +14,7 @@ interface IUserFormInput {
 }
 
 const LoginForm = () => {
-  const { login } = useAuth();
+  const { login, user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const {
@@ -24,6 +24,14 @@ const LoginForm = () => {
     control,
     setError,
   } = useForm<IUserFormInput>();
+
+  // Redirige si ya está autenticado
+  React.useEffect(() => {
+    if (user) {
+      navigate("/communities", { replace: true });
+    }
+  }, [user, navigate]);
+
   const onSubmit: SubmitHandler<IUserFormInput> = (data) =>
     login(data.email, data.password)
       .then(() => {
@@ -41,14 +49,10 @@ const LoginForm = () => {
             type: "invalidPassword",
           });
         }
-
-        // setFormErrors("login" + error.response.status);
         setValue("password", "", { shouldValidate: false });
       });
   const [isVisible, setIsVisible] = React.useState(false);
   const toggleVisibility = () => setIsVisible(!isVisible);
-
-
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
@@ -124,7 +128,6 @@ const LoginForm = () => {
           </Button>
         </form>
         <div>
-          <Link>¿Olvidaste la contraseña?</Link>
           <p>
             ¿No tienes cuenta? <Link
               href="/register"
