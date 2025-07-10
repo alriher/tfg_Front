@@ -67,9 +67,6 @@ export default function SpaceDetailsComponent() {
   }, [entryDate, setValue, trigger]);
 
   const selectedSchedule = useWatch({ control, name: "schedule" });
-  useEffect(() => {
-    setValue("assistants", "");
-  }, [selectedSchedule, setValue]);
 
   useEffect(() => {
     if (id) {
@@ -301,7 +298,10 @@ export default function SpaceDetailsComponent() {
                         isRequired={true}
                         disabledKeys={fullSchedules}
                         isDisabled={disableSchedule}
-                        onBlur={() => setValue("assistants", "")}
+                        onChange={(e) => {
+                          field.onChange(e);
+                          setValue("assistants", "");
+                        }}
                       >
                         {schedule.map((s) => {
                           const [startHour] = s.value.split(":");
@@ -322,37 +322,41 @@ export default function SpaceDetailsComponent() {
                   name="assistants"
                   rules={{ required: true }}
                   render={({ field }) => (
-                    <>
-                      <Select
-                        {...field}
-                        placeholder={
-                          space?.isSlotBased
-                            ? "Selecciona el número de asistentes"
-                            : "Selecciona el número de espacios"
-                        }
-                        label={space?.isSlotBased ? "Asistentes" : "Espacios"}
-                        isRequired={true}
-                        isInvalid={!!errors.assistants}
-                        errorMessage={getErrorMessage(errors.assistants?.type, {
-                          field: space?.isSlotBased ? "asistentes" : "espacios",
-                        })}
-                        className="mt-2 md:col-span-2"
-                        isDisabled={maxAssistants === 0 || !selectedSchedule}
-                        description={
-                          selectedSchedule
-                            ? `${
-                                space?.isSlotBased ? "Plazas" : "Espacios"
-                              } libres para esta hora: ${maxAssistants}`
-                            : ""
-                        }
-                      >
-                        {Array.from({ length: maxAssistants }, (_, i) =>
-                          String(i + 1)
-                        ).map((c) => (
-                          <SelectItem key={c}>{c}</SelectItem>
-                        ))}
-                      </Select>
-                    </>
+                    <Select
+                      key={
+                        // Forzar reseteo visual al cambiar fecha u hora
+                        `${control._formValues.entryDate?.year || ''}-${control._formValues.entryDate?.month || ''}-${control._formValues.entryDate?.day || ''}-${control._formValues.schedule || ''}`
+                      }
+                      {...field}
+                      placeholder={
+                        space?.isSlotBased
+                          ? "Selecciona el número de asistentes"
+                          : "Selecciona el número de espacios"
+                      }
+                      label={space?.isSlotBased ? "Asistentes" : "Espacios"}
+                      isRequired={true}
+                      isInvalid={!!errors.assistants}
+                      errorMessage={getErrorMessage(errors.assistants?.type, {
+                        field: space?.isSlotBased ? "asistentes" : "espacios",
+                      })}
+                      className="mt-2 md:col-span-2"
+                      isDisabled={maxAssistants === 0 || !selectedSchedule}
+                      description={
+                        selectedSchedule
+                          ? `${
+                              space?.isSlotBased ? "Plazas" : "Espacios"
+                            } libres para esta hora: ${maxAssistants}`
+                          : ""
+                      }
+                      selectedKeys={field.value ? [String(field.value)] : []}
+                      onChange={(e) => field.onChange(e.target.value)}
+                    >
+                      {Array.from({ length: maxAssistants }, (_, i) =>
+                        String(i + 1)
+                      ).map((c) => (
+                        <SelectItem key={c}>{c}</SelectItem>
+                      ))}
+                    </Select>
                   )}
                 />
                 <Button type="submit" className="md:col-span-2" color="primary">
