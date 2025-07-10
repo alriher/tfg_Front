@@ -67,6 +67,8 @@ function BookingsDetails() {
   const [page, setPage] = useState(1);
   const [pageSize] = useState(15);
   const [total, setTotal] = useState(0);
+  // Estado de loading
+  const [loading, setLoading] = useState(true);
 
   // Formulario para editar
   const {
@@ -98,8 +100,9 @@ function BookingsDetails() {
 
   useEffect(() => {
     if (user) {
-      getBookingsByUserIdPaginated(Number(user.id), page, pageSize).then(
-        (res) => {
+      setLoading(true);
+      getBookingsByUserIdPaginated(Number(user.id), page, pageSize)
+        .then((res) => {
           if (Array.isArray(res)) {
             setBookings(res);
             setTotal(res.length);
@@ -107,8 +110,12 @@ function BookingsDetails() {
             setBookings(res.bookings || []);
             setTotal(res.total || 0);
           }
-        }
-      );
+        })
+        .finally(() => setLoading(false));
+    } else {
+      setBookings([]);
+      setTotal(0);
+      setLoading(false);
     }
   }, [user, page, pageSize]);
 
@@ -360,7 +367,11 @@ function BookingsDetails() {
         Tus reservas
       </h1>
       <div className="px-6 container m-auto grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-4">
-        {bookings.length === 0 ? (
+        {loading ? (
+          <div className="col-span-full text-center text-default-500 py-12 flex flex-col items-center gap-4">
+            <div>Cargando reservas...</div>
+          </div>
+        ) : bookings.length === 0 ? (
           <div className="col-span-full text-center text-default-500 py-12 flex flex-col items-center gap-4">
             <div>No tienes reservas.</div>
             <Button
