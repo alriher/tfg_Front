@@ -103,7 +103,7 @@ const RegisterForm = () => {
   const toggleVisibility2 = () => setIsVisible2(!isVisible2);
 
   return (
-    <div className="flex justify-center items-center px-4 py-24 sm:py-0 min-h-screen bg-gray-100">
+    <div className="flex justify-center items-center px-4 py-24 min-h-screen bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-md max-w-md w-full">
         <h2 className="text-2xl font-bold mb-6 text-center">Registro</h2>
         <form
