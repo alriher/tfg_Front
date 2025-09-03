@@ -7,6 +7,7 @@ import {
   deleteSpace,
   uploadImageToCloudinary,
 } from "../services/AdminSpaceServices";
+import { useNavigate } from "react-router-dom";
 import SpaceForm from "./SpaceForm";
 import {
   Pagination,
@@ -39,8 +40,8 @@ const ChevronIcon = (props: any) => (
     />
   </svg>
 );
-
 function AdminSpacesComponent() {
+  const navigate = useNavigate();
   const [spaces, setSpaces] = useState<ISpace[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
@@ -131,8 +132,7 @@ function AdminSpacesComponent() {
   // Handler para mostrar reservas del espacio
   const handleShowBookings = (space: ISpace) => {
     // Implementa la lógica para mostrar las reservas del espacio, por ejemplo:
-    // navigate(`/admin/spaces/${space.id}/bookings`);
-    alert(`Mostrar reservas para el espacio: ${space.name}`);
+    navigate(`/spaces/${space.id}/bookings`);
   };
 
   const renderItem = ({
