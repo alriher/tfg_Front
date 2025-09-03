@@ -72,7 +72,7 @@ export default function SpaceCard({ space, showButtons, onEdit, onCancel, onShow
               {(() => {
                 const start = moment(booking.dateStart);
                 const end = moment(booking.dateEnd);
-                const day = start.day();
+                const day = start.date();
                 const month = start.month() + 1; // Los meses en moment.js son 0-indexed
                 const year = start.year();
                 const startHour = start.hours().toString().padStart(2, '0');
